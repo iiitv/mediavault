@@ -4,3 +4,4 @@
 ### Members
 * Rahul Chaurasia
 * Pratyush Singh
+* Charu Chhimpa
