@@ -1,5 +1,5 @@
 
-# LEGBOOK - A Social Networking Platform
+# LEGBOOK - A Social File Sharing and Discussion Platform
 
 ### Members
 * Rahul Chaurasia
