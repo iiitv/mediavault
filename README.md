@@ -1,5 +1,5 @@
 
-# LEGBOOK - A Social File Sharing and Discussion Platform
+# MEdiaVault - A Simple Media Streaming Utility
 
 ### Members
 * Rahul Chaurasia
