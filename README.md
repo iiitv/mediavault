@@ -1,5 +1,5 @@
 
-# MEdiaVault - A Simple, Personal Media Streaming Utility
+# MediaVault - A Simple, Personal Media Streaming Utility
 
 ### Members
 * Rahul Chaurasia
