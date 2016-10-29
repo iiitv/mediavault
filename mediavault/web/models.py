@@ -4,6 +4,9 @@ from django.db import models
 
 
 class ItemType(models.Model):
+    """
+    Database ORM class storing item types.
+    """
     def __str__(self):
         return self.type
 
