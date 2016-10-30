@@ -1,3 +1,6 @@
+"""
+This file declares classes of various models that will be stored in database.
+"""
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.db import models
@@ -14,6 +17,9 @@ class ItemType(models.Model):
 
 
 class Artist(models.Model):
+    """
+    Database ORM class for storing Artists
+    """
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 
@@ -22,6 +28,9 @@ class Artist(models.Model):
 
 
 class Album(models.Model):
+    """
+    Database ORM class for storing Albums
+    """
     def __str__(self):
         return self.name
 
@@ -29,6 +38,9 @@ class Album(models.Model):
 
 
 class VideoCodec(models.Model):
+    """
+    Database ORM class for storing Video Codecs
+    """
     def __str__(self):
         return self.codec
 
@@ -36,6 +48,9 @@ class VideoCodec(models.Model):
 
 
 class AudioCodec(models.Model):
+    """
+    Database ORM for storing Audio Codecs
+    """
     def __str__(self):
         return self.codec
 
@@ -43,8 +58,11 @@ class AudioCodec(models.Model):
 
 
 class SharedItem(models.Model):
+    """
+    Database ORM for storing Shared Media Items
+    """
     def __str__(self):
-        return ''
+        return '{0} - {1} | {2}'.format(self.name, self.type, self.path)
 
     name = models.CharField(max_length=2014, default='')
     type = models.ForeignKey(ItemType)
@@ -66,6 +84,9 @@ class SharedItem(models.Model):
 
 
 class ItemAccessibility(models.Model):
+    """
+    Database ORM to store the accessibility of shared items to users
+    """
     def __str__(self):
         return '{0} {1} accessible to {2}'.format(
             self.item,
@@ -80,6 +101,9 @@ class ItemAccessibility(models.Model):
 
 
 class ItemRating(models.Model):
+    """
+    Database ORM to store rating of items
+    """
     def __str__(self):
         return '{0} rated {1} {2}/10'.format(self.user, self.item, self.rating)
 
@@ -90,6 +114,9 @@ class ItemRating(models.Model):
 
 
 class Suggestion(models.Model):
+    """
+    Database ORM to store suggestions
+    """
     def __str__(self):
         return '{0} suggested {1} to {2}'.format(self.from_user, self.item,
                                                  self.to_user)
