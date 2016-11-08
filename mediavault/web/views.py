@@ -1,3 +1,11 @@
-from django.shortcuts import render
+"""
+Views for 'web' app
+"""
 
-# Create your views here.
+
+def home(request):
+    pass
+
+
+def explore(request):
+    pass

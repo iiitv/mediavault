@@ -81,6 +81,7 @@ class SharedItem(models.Model):
     audio_channels = models.PositiveIntegerField(null=True, blank=True)
     audio_sample_rate = models.PositiveIntegerField(null=True, blank=True)
     audio_bit_rate = models.PositiveIntegerField(null=True, blank=True)
+    children = models.ManyToManyField('SharedItem')
 
 
 class ItemAccessibility(models.Model):
