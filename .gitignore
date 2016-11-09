@@ -87,3 +87,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+/mediavault/db.sqlite3
+/mediavault/web/migrations
+/.idea

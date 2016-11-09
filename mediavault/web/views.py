@@ -1,3 +1,14 @@
-from django.shortcuts import render
+"""
+Views for 'web' app
+"""
+import json
 
-# Create your views here.
+from django.http import HttpResponse
+from rest_framework.authtoken.models import Token
+from .models import get_children
+
+
+def home(request):
+    pass
+
+
