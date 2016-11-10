@@ -10,6 +10,7 @@ class ItemType(models.Model):
     """
     Database ORM class storing item types.
     """
+
     def __str__(self):
         return self.type
 
@@ -20,6 +21,7 @@ class Artist(models.Model):
     """
     Database ORM class for storing Artists
     """
+
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 
@@ -31,6 +33,7 @@ class Album(models.Model):
     """
     Database ORM class for storing Albums
     """
+
     def __str__(self):
         return self.name
 
@@ -41,6 +44,7 @@ class VideoCodec(models.Model):
     """
     Database ORM class for storing Video Codecs
     """
+
     def __str__(self):
         return self.codec
 
@@ -51,6 +55,7 @@ class AudioCodec(models.Model):
     """
     Database ORM for storing Audio Codecs
     """
+
     def __str__(self):
         return self.codec
 
@@ -61,6 +66,7 @@ class SharedItem(models.Model):
     """
     Database ORM for storing Shared Media Items
     """
+
     def __str__(self):
         return '{0} - {1} | {2}'.format(self.name, self.type, self.path)
 
@@ -113,6 +119,7 @@ class ItemAccessibility(models.Model):
     """
     Database ORM to store the accessibility of shared items to users
     """
+
     def __str__(self):
         return '{0} {1} accessible to {2}'.format(
             self.item,
@@ -130,6 +137,7 @@ class ItemRating(models.Model):
     """
     Database ORM to store rating of items
     """
+
     def __str__(self):
         return '{0} rated {1} {2}/10'.format(self.user, self.item, self.rating)
 
@@ -143,6 +151,7 @@ class Suggestion(models.Model):
     """
     Database ORM to store suggestions
     """
+
     def __str__(self):
         return '{0} suggested {1} to {2}'.format(self.from_user, self.item,
                                                  self.to_user)
@@ -153,27 +162,27 @@ class Suggestion(models.Model):
     time = models.DateField(default=datetime.now)
 
 
-def get_children(parent):
+def get_children(parent, user):
     if not parent:
-        return get_root_items()
+        return get_root_items(user)
     try:
         parent = int(parent)
     except ValueError:
-        return get_root_items()
+        return get_root_items(user)
     item = SharedItem.objects.filter(id=parent)
     if len(item) == 0:
-        return get_root_items()
+        return get_root_items(user)
     else:
         item = item[0]
     return item.children.all()
 
 
-def get_root_items():
+def get_root_items(user):
     all_children = set()
     all_items = SharedItem.objects.all()
     for item in all_items:
         all_children = all_children.union(set(item.children.all()))
-    return list(set(all_items).difference(all_children))
+    return filter_items(set(all_items).difference(all_children), user)
 
 
 def filter_items(items, user):
@@ -184,3 +193,32 @@ def filter_items(items, user):
             if access[0].accessible:
                 allowed.append(item)
     return allowed
+
+
+def get_children_recursive(parent, user):
+    if not parent:
+        return get_root_items_recursive(user)
+    try:
+        parent = int(parent)
+    except ValueError:
+        return get_root_items_recursive(user)
+    item = SharedItem.objects.filter(id=parent)
+    if len(item) == 0:
+        return get_root_items_recursive(user)
+    item = item[0]
+    parent_dict = item.dictify()
+    children = item.children.all()
+    children = filter_items(children, user)
+    child_list = [get_children_recursive(child.id, user) for child in children]
+    parent_dict['children'] = child_list
+    return parent_dict
+
+
+def get_root_items_recursive(user):
+    root_items = get_root_items(user)
+    tree = [get_children_recursive(item.id, user) for item in root_items]
+    return tree
+
+
+def get_suggested_items(user):  # TODO : Implement it
+    pass
