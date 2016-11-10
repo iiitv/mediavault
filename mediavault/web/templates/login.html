@@ -60,7 +60,9 @@
 <!-- Body -->
 <body>
 	{% if error %}
-    	{{ error }}
+	<center>
+    	    <p style="color:white;font-size:20px;margin-top:30px;">{{ error }}</p>
+	</center>
 	{% endif %}
 	<center>
 	<img src="/static/images/logo1.png" style="display:inline-block;vertical-align: middle;">
@@ -85,6 +87,7 @@
 						
 
 						<div id="register" class="animate w3layouts agileits form" style="height:520px;">
+							<div style="margin-top:80px;">
 							<h2>Sign in</h2>
 							<form method="post" target="">
     							{% csrf_token %}
@@ -98,16 +101,9 @@
 										<input type="submit" name="login" value="Sign in" >
 								</center>
 							</form>
-								
-							<div class="clear"></div>
-							<div class="social-icons w3layouts agileits" style="top:92%;">
-								<p>USE YOUR SOCIAL ACCOUNTS TO SIGN IN</p>
-								<ul>
-									<li class="fb w3ls w3layouts agileits"><a href="#"><span class="icons w3layouts agileits"></span><span class="text w3layouts agileits">Facebook</span></a></li>
-									<li class="twt w3ls w3layouts agileits"><a href="#"><span class="icons w3layouts agileits"></span><span class="text w3layouts agileits">Twitter</span></a></li>
-									<div class="clear"></div>
-								</ul>
 							</div>
+								
+							
 
 						</div>
 						<div class="clear"></div>
