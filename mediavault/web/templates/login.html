@@ -64,7 +64,7 @@
 	{% endif %}
 	<center>
 	<img src="/static/images/logo1.png" style="display:inline-block;vertical-align: middle;">
-	<h1 style="display: inline-block; color:white;vertical-align: middle;">MEDIA VAULT LOGIN FORM</h1>
+	<h1 style="display: inline-block; color:white;vertical-align: middle;">MediaVault - Login</h1>
 	</center>
 	<div class="container w3layouts agileits">
 		<div class="content-left w3layouts agileits">
@@ -89,10 +89,10 @@
 							<form method="post" target="">
     							{% csrf_token %}
 
-									<label>Username</label>
-									<input type="text" class="name w3layouts agileits" Name="Name" required="">
-									<label>Password</label>
-									<input type="password" Name="Password" required="">
+									<label for="username">Username: </label>
+									<input id="username" type="text" class="name w3layouts agileits" Name="username" required="">
+									<label for="password">Password: </label>
+									<input id="password" type="password" Name="password" required="">
 									<br>
 									<center>
 										<input type="submit" name="login" value="Sign in" >
@@ -108,7 +108,7 @@
 									<div class="clear"></div>
 								</ul>
 							</div>
-							
+
 						</div>
 						<div class="clear"></div>
 
