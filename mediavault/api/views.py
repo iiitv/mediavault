@@ -2,7 +2,7 @@ import json
 
 from django.http import HttpResponse
 from rest_framework.authtoken.models import Token
-from web.models import get_children, filter_items
+from web.models import get_children
 
 
 def explore(request):
@@ -19,8 +19,7 @@ def explore(request):
         return HttpResponse(json.dumps({"error": "Invalid key"}), 401)
     user = user[0].user
     parent = request.GET.get('parent', None)
-    children = get_children(parent)
-    children = filter_items(children, user)
+    children = get_children(parent, user)
     children_dict = []
     for child in children:
         children_dict.append(child.dictify())
