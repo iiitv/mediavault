@@ -90,6 +90,7 @@ def shared_items(request):
             errors.append('Problem adding item(s)')
             traceback.print_exc()
     elif request.POST.get('remove', None):
+        print("Request to remove items")
         _id = request.POST.get('id')
         item = SharedItem.objects.filter(id=int(_id))
         if len(item) == 0:

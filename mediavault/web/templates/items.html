@@ -25,5 +25,10 @@
     </select>
     <input type="submit" name="add">
 </form>
+<form target="" method="post">
+    {% csrf_token %}
+    <input type="text" placeholder="ID to delete" name="id">
+    <input type="submit" name="remove" value="Delete Item(s)">
+</form>
 </body>
 </html>

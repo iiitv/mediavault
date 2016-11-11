@@ -75,7 +75,7 @@ class SharedItem(models.Model):
     """
 
     def __str__(self):
-        return '{0} - {1} | {2}'.format(self.name, self.type, self.path)
+        return '{2}. {0} - {1}'.format(self.name, self.type, self.id)
 
     name = models.CharField(max_length=2014, default='')
     type = models.ForeignKey(ItemType)
@@ -247,7 +247,10 @@ def add_item_recursive(location, user, permission, parent=None):
 
 
 def remove_item_recursive(item):
-    pass
+    for child in item.children.all():
+        remove_item_recursive(child)
+    print("Deleting item - {0}".format(item))
+    item.delete()
 
 
 def add_item(location, user, permission, parent, directory=False):
