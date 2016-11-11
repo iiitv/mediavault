@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MediaVault | Shared Items</title>
+</head>
+<body>
+{% if number_of_messages > 0 %}
+    {% for message in messages %}
+        {{ message }} <br/>
+    {% endfor %}
+{% endif %}
+{% if number_of_errors > 0 %}
+    {% for message in errors %}
+        {{ message }} <br/>
+    {% endfor %}
+{% endif %}
+<form target="" method="post">
+    {% csrf_token %}
+    <input type="text" name="location" placeholder="Location to Add" required="required">
+    <select name="permission">
+        <option value="all">Everyone</option>
+        <option value="admin">Admins Only</option>
+        <option value="self">Only You (Current User)</option>
+    </select>
+    <input type="submit" name="add">
+</form>
+</body>
+</html>
