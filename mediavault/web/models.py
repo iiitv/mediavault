@@ -323,3 +323,21 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
             permissions.append(ItemAccessibility(user=user, item=instance,
                                                  accessible=False))
         ItemAccessibility.objects.bulk_create(permissions)
+
+
+def grant_permission_recursive(item, user, admin_only):
+    for child in item.children.all():
+        grant_permission_recursive(child, user, admin_only)
+    grant_permission(item, user, admin_only)
+
+
+def remove_permission_recursive(item, user):
+    for child in item.children.all():
+        remove_permission_recursive(child, user)
+    remove_permission(item, user)
+
+
+def remove_permission(item, user):
+    instance = ItemAccessibility.objects.get(user=user, item=item)
+    instance.accessible = False
+    instance.save()

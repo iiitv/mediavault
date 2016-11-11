@@ -7,7 +7,8 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from .models import get_root_items_recursive, get_suggested_items, \
-    add_item_recursive, remove_item_recursive, SharedItem
+    add_item_recursive, remove_item_recursive, SharedItem, \
+    grant_permission_recursive, remove_permission_recursive, ItemAccessibility
 from .forms import LoginForm
 
 
@@ -110,3 +111,54 @@ def shared_items(request):
             'messages': messages
         }
     )
+
+
+def single_shared_item(request, id):
+    username = request.session.get('username', None)
+    if not username:
+        return redirect('/login?err=Login required')
+    user = User.objects.filter(username=username)
+    if len(user) == 0:
+        return redirect('/login?err=No such user')
+    user = user[0]
+    if not user.is_superuser:
+        return redirect('/')
+    errors = []
+    messages = []
+    id = int(id)
+    item = SharedItem.objects.filter(id=id)
+    if len(item) == 0:
+        return render(request, 'notfound.html', {'error': 'No such item found'})
+    item = item[0]
+    if request.POST.get('add-permission', None):
+        user_id = int(request.POST.get('user_add_id'))
+        print("Request to add permission -- {0} -- {1}".format(id, user_id))
+        _user = User.objects.filter(id=user_id)
+        if len(_user) == 1:
+            grant_permission_recursive(item, _user, False)
+            messages.append('Access granted to {0}'.format(_user))
+        else:
+            errors.append('No such user found')
+    if request.POST.get('remove-permission', None):
+        user_id = int(request.POST.get('user_remove_id'))
+        _user = User.objects.filter(id=user_id)
+        if len(_user) == 1:
+            remove_permission_recursive(item, _user)
+            messages.append('Access removed from {0}'.format(_user))
+        else:
+            errors.append('No such user found')
+    allowed_users = [inst.user for inst in
+                     ItemAccessibility.objects.filter(item=item,
+                                                      accessible=True)]
+    other_users = [inst.user for inst in
+                     ItemAccessibility.objects.filter(item=item,
+                                                      accessible=False)]
+    return render(request, 'single_item.html', {
+        'number_of_errors': len(errors),
+        'number_of_messages': len(messages),
+        'errors': errors,
+        'messages': messages,
+        'allowed_users': allowed_users,
+        'other_users': other_users,
+        'item': item
+    })
