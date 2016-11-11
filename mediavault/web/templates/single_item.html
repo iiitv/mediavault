@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MediaVault | Shared Items | {{ item.name }}</title>
+</head>
+<body>
+    Item selected - {{ item.name }}<br/>
+    Item path - {{ item.path }}
+    <form method="post">
+        {% csrf_token %}
+        Grant Permissionn to...<br/>
+        <select name="user_add_id">
+            {% for user in other_users %}
+                <option value="{{ user.id }}">{{user.username}}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" name="add-permission" value="add-permission">
+    </form>
+    <form method="post">
+        {% csrf_token %}
+        Remove Permission from...<br/>
+        <select name="user_remove_id">
+            {% for user in allowed_users %}
+                <option value="{{ user.id }}">{{user.username}}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" name="remove-permission" value="remove-permission">
+    </form>
+</body>
+</html>

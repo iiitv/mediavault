@@ -1,9 +1,16 @@
 """
 This file declares classes of various models that will be stored in database.
 """
+import os
 from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.db.transaction import atomic
+from django.dispatch import receiver
+
+from . import identifier, is_media
 
 
 class ItemType(models.Model):
@@ -68,7 +75,7 @@ class SharedItem(models.Model):
     """
 
     def __str__(self):
-        return '{0} - {1} | {2}'.format(self.name, self.type, self.path)
+        return '{2}. {0} - {1}'.format(self.name, self.type, self.id)
 
     name = models.CharField(max_length=2014, default='')
     type = models.ForeignKey(ItemType)
@@ -222,3 +229,115 @@ def get_root_items_recursive(user):
 
 def get_suggested_items(user):  # TODO : Implement it
     pass
+
+
+def add_item_recursive(location, user, permission, parent=None):
+    print('Adding Item - {0} {1} {2} {3}'.format(location, user, permission,
+                                                 parent))
+    if not os.path.isdir(location):
+        return add_item(location, user, permission, parent)
+    else:
+        items = os.listdir(location)
+        number = add_item(location, user, permission, parent, directory=True)
+        curr_dir = SharedItem.objects.get(path=location)
+        for item in items:
+            number += add_item_recursive(location + '/' + item, user,
+                                         permission, curr_dir)
+        return number
+
+
+def remove_item_recursive(item):
+    for child in item.children.all():
+        remove_item_recursive(child)
+    print("Deleting item - {0}".format(item))
+    item.delete()
+
+
+def add_item(location, user, permission, parent, directory=False):
+    if len(SharedItem.objects.filter(path=location)) > 0:
+        print("Already exists")
+        return 0
+    if directory:
+        mime = 'Directory'
+    else:
+        mime = identifier.from_file(location)
+    if not is_media(mime):
+        return 0
+    if location[-1] == '/':
+        location = location[:-1]
+    name = location.split('/')[-1]
+    type = ItemType.objects.filter(type=mime)
+    if len(type) == 0:
+        type = ItemType(type=mime)
+        type.save()
+    else:
+        type = type[0]
+    new_item = SharedItem(name=name, type=type,
+                          path=location)  # TODO : Get more details
+    new_item.save()
+    if parent:
+        parent.children.add(new_item)
+        parent.save()
+    if permission == 'all':
+        grant_permission(new_item, None, admin_only=False)
+    elif permission == 'admin':
+        grant_permission(new_item, None, admin_only=True)
+    elif permission == 'self':
+        grant_permission(new_item, user, admin_only=False)
+    return 1
+
+
+def grant_permission(item, user, admin_only):
+    print("Permission Grant - {0} -- {1} -- {2}".format(item, user, admin_only))
+    if admin_only:
+        users = User.objects.filter(is_superuser=True)
+        with atomic():
+            for _user in users:
+                print("Granting Access of {0} to {1}".format(item, _user))
+                accessibility_instance = ItemAccessibility.objects.get(
+                    user=_user, item=item)
+                accessibility_instance.accessible = True
+                accessibility_instance.save()
+    elif user:
+        print("Granting Access of {0} to {1}".format(item, user))
+        accessibility_instance = ItemAccessibility.objects.get(user=user,
+                                                               item=item)
+        accessibility_instance.accessible = True
+        accessibility_instance.save()
+    else:
+        users = User.objects.all()
+        with atomic():
+            for _user in users:
+                print("Granting Access of {0} to {1}".format(item, _user))
+                accessibility_instance = ItemAccessibility.objects.get(
+                    user=_user, item=item)
+                accessibility_instance.accessible = True
+                accessibility_instance.save()
+
+
+@receiver(post_save, sender=SharedItem)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        permissions = []
+        for user in User.objects.all():
+            permissions.append(ItemAccessibility(user=user, item=instance,
+                                                 accessible=False))
+        ItemAccessibility.objects.bulk_create(permissions)
+
+
+def grant_permission_recursive(item, user, admin_only):
+    for child in item.children.all():
+        grant_permission_recursive(child, user, admin_only)
+    grant_permission(item, user, admin_only)
+
+
+def remove_permission_recursive(item, user):
+    for child in item.children.all():
+        remove_permission_recursive(child, user)
+    remove_permission(item, user)
+
+
+def remove_permission(item, user):
+    instance = ItemAccessibility.objects.get(user=user, item=item)
+    instance.accessible = False
+    instance.save()
