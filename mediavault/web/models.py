@@ -10,7 +10,7 @@ from django.db.models.signals import post_save
 from django.db.transaction import atomic
 from django.dispatch import receiver
 
-from . import identifier, is_media
+from . import identifier, is_media, media_type
 
 
 class ItemType(models.Model):
@@ -120,6 +120,15 @@ class SharedItem(models.Model):
             "audio_bit_rate": self.audio_bit_rate
         }
         return _dict
+
+    def exists(self):
+        return os.path.exists(self.path)
+
+    def media_type(self):
+        return media_type(self.type.type)
+
+    def accessible(self, user):
+        return ItemAccessibility.objects.get(user=user, item=self).accessible
 
 
 class ItemAccessibility(models.Model):
@@ -262,6 +271,8 @@ def add_item(location, user, permission, parent, directory=False):
     else:
         mime = identifier.from_file(location)
     if not is_media(mime):
+        print('Unrecognized mime {1} for - {0}... Ignoring.'.format(location,
+                                                                    mime))
         return 0
     if location[-1] == '/':
         location = location[:-1]
