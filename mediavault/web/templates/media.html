@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MediaVault | {{ item.name }}</title>
+</head>
+<body>
+{% if type == 'audio' %}
+<audio controls src="/media-get/{{item.id}}" preload="auto">
+    Not supported.
+</audio>
+{% elif type == 'video' %}
+<video controls src="/media-get/{{item.id}}" preload="auto">
+    Not supported.
+</video>
+{% elif type == 'image' %}
+<img src="/media-get/{{item.id}}"
+     alt="Unable to display image. Please download.">
+{% elif type == 'directory' %}
+Item is a directory
+{% else %}
+Mime not recognized.
+{% endif %}
+{% if type != 'directory' %}
+<a href="/media-get/{{item.id}}">Download</a>
+{% endif %}
+</body>
+</html>

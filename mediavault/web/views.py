@@ -2,14 +2,17 @@
 Views for 'web' app
 """
 import traceback
+from wsgiref.util import FileWrapper
 
-from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
 from rest_framework.authtoken.models import Token
+
+from .forms import LoginForm
 from .models import get_root_items_recursive, get_suggested_items, \
     add_item_recursive, remove_item_recursive, SharedItem, \
     grant_permission_recursive, remove_permission_recursive, ItemAccessibility
-from .forms import LoginForm
 
 
 def home(request):
@@ -151,8 +154,8 @@ def single_shared_item(request, id):
                      ItemAccessibility.objects.filter(item=item,
                                                       accessible=True)]
     other_users = [inst.user for inst in
-                     ItemAccessibility.objects.filter(item=item,
-                                                      accessible=False)]
+                   ItemAccessibility.objects.filter(item=item,
+                                                    accessible=False)]
     return render(request, 'single_item.html', {
         'number_of_errors': len(errors),
         'number_of_messages': len(messages),
@@ -162,3 +165,51 @@ def single_shared_item(request, id):
         'other_users': other_users,
         'item': item
     })
+
+
+def media_page(request, id):
+    username = request.session.get('username', None)
+    if not username:
+        return redirect('/login?err=Login required')
+    user = User.objects.filter(username=username)
+    if len(user) == 0:
+        return redirect('/login?err=No such user')
+    user = user[0]
+    item = SharedItem.objects.filter(id=id)
+    if len(item) == 0:
+        return render(request, 'notfound.html', {'error': 'No such item found'})
+    else:
+        item = item[0]
+        if not item.accessible(user):
+            return render(
+                request, 'notfound.html',
+                {'error': 'You do not have permission to view this item'})
+    if not item.exists():
+        remove_item_recursive(item)
+        return render(request, 'notfound.html',
+                      {'error': 'The item you are looking for is not found on '
+                                'the given location.'})
+    media_type = item.media_type()
+    return render(request, 'media.html', {'type': media_type, 'item': item})
+
+
+def media_get(request, id):
+    username = request.session.get('username', None)
+    if not username:
+        return redirect('/login?err=Login required')
+    user = User.objects.filter(username=username)
+    if len(user) == 0:
+        return redirect('/login?err=No such user')
+    user = user[0]
+    item = SharedItem.objects.filter(id=id)
+    if len(item) == 0:
+        return HttpResponse('', status=404)
+    else:
+        item = item[0]
+        if not item.accessible(user):
+            return HttpResponse('', status=503)
+    if not item.exists():
+        remove_item_recursive(item)
+        return HttpResponse('', status=404)
+    file = FileWrapper(open(item.path, 'rb'))
+    return HttpResponse(file, content_type=item.type.type)
