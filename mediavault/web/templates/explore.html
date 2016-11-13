@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MediaVault | Explore</title>
+</head>
+<body>
+{% for item in items %}
+{% if item.type.type == 'Directory' %}
+<li><a href="/explore/{{item.id}}">{{item.name}}</a></li>
+{% else %}
+<li><a href="/media/{{item.id}}">{{item.name}}</a></li>
+{% endif %}
+{% endfor %}
+</body>
+</html>

@@ -12,5 +12,7 @@ urlpatterns = [
     url(r'^shared-items/(?P<id>[0-9]+)/?$', views.single_shared_item,
         name='single-shared-item'),
     url(r'^media/(?P<id>[0-9]+)/?$', views.media_page, name='media-page'),
-    url(r'^media-get/(?P<id>[0-9]+)/?$', views.media_get, name='media-get')
+    url(r'^media-get/(?P<id>[0-9]+)/?$', views.media_get, name='media-get'),
+    url(r'^explore/?$', views.explore_root, name='explore-root'),
+    url(r'^explore/(?P<id>[0-9]+)/?$', views.explore, name='explore')
 ]
