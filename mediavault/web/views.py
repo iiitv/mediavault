@@ -10,7 +10,7 @@ from django.shortcuts import redirect, render
 from rest_framework.authtoken.models import Token
 
 from .forms import LoginForm
-from .models import get_root_items_recursive, get_suggested_items, \
+from .models import get_suggested_items, \
     add_item_recursive, remove_item_recursive, SharedItem, \
     grant_permission_recursive, remove_permission_recursive, ItemAccessibility, \
     get_root_items
@@ -24,14 +24,14 @@ def home(request):
     if len(user) == 0:
         return redirect('/login?err=No such user')
     user = user[0]
-    item_tree = get_root_items_recursive(user)
+    # item_tree = get_root_items_recursive(user)
     suggested_items = get_suggested_items(user)
     return render(
         request,
         'home.html',
         {
             'is_admin': user.is_superuser,
-            'tree': item_tree,
+            # 'tree': item_tree,
             'suggestions': suggested_items
         }
     )
@@ -103,12 +103,12 @@ def shared_items(request):
         else:
             item_count = remove_item_recursive(item[0])
             messages.append('Successfully deleted {0} items'.format(item_count))
-    tree = get_root_items_recursive(user)
+    # tree = get_root_items_recursive(user)
     return render(
         request,
         'items.html',
         {
-            'tree': tree,
+            # 'tree': tree,
             'number_of_errors': len(errors),
             'number_of_mesages': len(messages),
             'errors': errors,
@@ -214,11 +214,7 @@ def media_get(request, id):
     if not item.exists():
         remove_item_recursive(item)
         return HttpResponse('', status=404)
-    file = FileWrapper(open(item.path, 'rb'))
-    response = HttpResponse(file, content_type=item.type.type)
-    response['Content-Disposition'] = 'attachment; filename={0}'.format(
-        item.name)
-    return response
+    return redirect('/static-media{0}'.format(item.path))
 
 
 def explore_root(request):
@@ -253,4 +249,5 @@ def explore(request, id):
         return HttpResponse('Not found', status=404)
     if item.type.type != 'Directory':
         return redirect('/media/{0}'.format(id))
-    return render(request, 'explore.html', {'items': item.children.all()})
+    return render(request, 'explore.html',
+                  {'items': item.children.all().order_by('name')})

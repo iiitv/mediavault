@@ -1,12 +1,14 @@
 """
-This file declares classes of various models that will be stored in database.
+This file declares classes of various models that will be stored in database
+and methods to manipulate them.
 """
 import os
+import threading
 from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_init, post_save
 from django.db.transaction import atomic
 from django.dispatch import receiver
 

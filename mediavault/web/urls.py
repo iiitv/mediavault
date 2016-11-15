@@ -2,7 +2,9 @@
 URL patterns for 'web' app
 """
 from django.conf.urls import url
+from django.conf.urls.static import static
 
+from mediavault import settings
 from . import views
 
 urlpatterns = [
@@ -16,3 +18,5 @@ urlpatterns = [
     url(r'^explore/?$', views.explore_root, name='explore-root'),
     url(r'^explore/(?P<id>[0-9]+)/?$', views.explore, name='explore')
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

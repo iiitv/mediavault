@@ -28,7 +28,8 @@ media_mimes = {
     'image/tiff': 'image',
     'audio/x-wav': 'audio',
     'video/x-matroska': 'video',
-    'application/octet-stream': 'audio'  # Risky
+    'application/octet-stream': 'audio',  # Risky
+    'video/x-ms-asf': 'video'
 }
 identifier = magic.Magic(mime=True)
 
