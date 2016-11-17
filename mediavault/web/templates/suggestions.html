@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MediaVault | {{user.username}} | Suggestions</title>
+</head>
+<body>
+<table border="1">
+    <thead>
+    <tr>
+        <td>Suggested Media</td>
+        <td>Suggested By</td>
+        <td>Suggestion Time</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for i in suggestions %}
+    <tr>
+        <td><a href="/media/{{i.item.id}}">{{i.item.name}}</a></td>
+        <td>{{i.from_user.username}}</td>
+        <td>{{i.time}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>

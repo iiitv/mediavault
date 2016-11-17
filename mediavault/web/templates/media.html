@@ -24,5 +24,15 @@ Mime not recognized.
 {% if type != 'directory' %}
 <a href="/media-get/{{item.id}}">Download</a>
 {% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <select name="id_suggest_user">
+        {% for user in users %}
+        <option value="{{user.id}}">{{user.username}}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" name="suggest">
+</form>
 </body>
 </html>

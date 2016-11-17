@@ -3,12 +3,11 @@ This file declares classes of various models that will be stored in database
 and methods to manipulate them.
 """
 import os
-import threading
 from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import post_init, post_save
+from django.db.models.signals import post_save
 from django.db.transaction import atomic
 from django.dispatch import receiver
 
@@ -177,7 +176,7 @@ class Suggestion(models.Model):
     from_user = models.ForeignKey(User, related_name='from_user')
     to_user = models.ForeignKey(User, related_name='to_user')
     item = models.ForeignKey(SharedItem)
-    time = models.DateField(default=datetime.now)
+    time = models.DateTimeField(default=datetime.now)
 
 
 def get_children(parent, user):

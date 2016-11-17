@@ -12,7 +12,7 @@ from .forms import LoginForm
 from .models import get_suggested_items, \
     add_item_recursive, remove_item_recursive, SharedItem, \
     grant_permission_recursive, remove_permission_recursive, ItemAccessibility, \
-    get_root_items
+    get_root_items, Suggestion
 
 
 def home(request):
@@ -112,7 +112,7 @@ def shared_items(request):
             'number_of_mesages': len(messages),
             'errors': errors,
             'messages': messages,
-            'items':get_root_items(user)
+            'items': get_root_items(user)
         }
     )
 
@@ -191,9 +191,19 @@ def media_page(request, id):
                       {'error': 'The item you are looking for is not found on '
                                 'the given location.'})
     media_type = item.media_type()
+    if request.POST.get('suggest', None):
+        user_ = User.objects.get(id=request.POST.get('id_suggest_user'))
+        suggestion_instance = Suggestion.objects.create(from_user=user,
+                                                        to_user=user_,
+                                                        item=item)
+        suggestion_instance.save()
     if media_type == 'directory':
         return redirect('/explore/{0}'.format(id))
-    return render(request, 'media.html', {'type': media_type, 'item': item})
+    allowed_users = [acc.user for acc in
+                     ItemAccessibility.objects.filter(item=item,
+                                                      accessible=True)]
+    return render(request, 'media.html',
+                  {'type': media_type, 'item': item, 'users': allowed_users})
 
 
 def media_get(request, id):
@@ -354,3 +364,16 @@ def master_user_modify(request):
                    'number_of_messages': len(messages), 'errors': errors,
                    'messages': messages, 'all_users': all_users,
                    'admins': admins, 'others': other})
+
+
+def show_suggestions(request):
+    username = request.session.get('username', None)
+    if not username:
+        return redirect('/login?err=Login required')
+    user = User.objects.filter(username=username)
+    if len(user) == 0:
+        return redirect('/login?err=No such user')
+    user = user[0]
+    suggestions = Suggestion.objects.filter(to_user=user).order_by('-time')[:15]
+    return render(request, 'suggestions.html',
+                  {'suggestions': suggestions, 'user': user})

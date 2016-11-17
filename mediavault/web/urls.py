@@ -20,7 +20,8 @@ urlpatterns = [
     url(r'^master/user/?$', views.master_user, name='master-user'),
     url(r'^master/user/add/?$', views.master_user_add, name='master-user-add'),
     url(r'^master/user/modify/?$', views.master_user_modify,
-        name='master-user-modify')
+        name='master-user-modify'),
+    url(r'^suggestions/?', views.show_suggestions, name='show_suggestions'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
