@@ -3,8 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <title>MediaVault | {{ item.name }}</title>
+    <style>
+    body{
+    	background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url("../static/images/download.jpg") no-repeat center center fixed; 
+	  -webkit-background-size: cover;
+	  -moz-background-size: cover;
+	  -o-background-size: cover;
+	  background-size: cover;
+
+    }
+    input[type=submit]{
+    background-color: white;
+    border-radius:5px;
+    color: black;
+    height:40px;
+    width:180px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 20px;
+    margin-top:10px;
+	}
+	button{
+		height:45px;
+		font-size: 25px;
+		margin-top:20px;
+		border-radius:5px;
+		width:200px;
+		color:black;
+		background-color: white;
+
+	}
+	select{
+		height:40px;
+		font-size: 20px;
+		width:200px;
+		border-radius:5px;
+		color:black;
+		background-color: white;
+
+	}
+	#wrapper { 
+    width: 800px;
+    margin: 0 auto;
+	}
+	#leftcolumn {
+	    width: 600px;
+	    height: 400px;
+	    float: left;
+	}
+
+	#rightcolumn{
+	    width: 200px;
+	
+	    height: 400px;
+	}
+    </style>
 </head>
 <body>
+<center>
+<h1 style="color:white;">{{item.name}}</h1>
+</center>
+<div id="container">
+<div style="margin-top:50px;" style="display:inline-block;vertical-align: middle;">
 {% if type == 'audio' %}
 <audio controls src="/media-get/{{item.id}}" preload="auto">
     Not supported.
@@ -22,17 +82,24 @@ Item is a directory
 Mime not recognized.
 {% endif %}
 {% if type != 'directory' %}
-<a href="/media-get/{{item.id}}">Download</a>
+<br/>
+<button><a href="/media-get/{{item.id}}" style="color:black;">Download</a></button>
 {% endif %}
-
+</div>
+<div  style="display:inline-block;vertical-align: middle;">
+<h1 style="color:white;">Wanna Suggest Someone??</h1>
 <form method="post">
     {% csrf_token %}
+    <div style="margin-top:20px;"> 
     <select name="id_suggest_user">
         {% for user in users %}
         <option value="{{user.id}}">{{user.username}}</option>
         {% endfor %}
     </select>
-    <input type="submit" name="suggest">
+    </div>
+	<input type="submit" name="suggest">
 </form>
+</div>
+</div>
 </body>
-</html>
+</html> 
