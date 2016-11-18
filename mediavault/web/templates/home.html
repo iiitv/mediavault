@@ -4,42 +4,93 @@
     <meta charset="UTF-8">
     <title>MediaVault | Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="stylesheet" href="/static/css/materialize.css" type="text/css" media="all">
     <link rel="stylesheet" href="/static/css/home.css" type="text/css" media="all">
 
 </head>
 <body>
     <div class="header">
     <center>
-	<img src="/static/images/logo1.png" style="display:inline-block;vertical-align: middle;">
 	<h1 style="display: inline-block; color:white;vertical-align: middle;">MediaVault - Home</h1>
-
-    </center>
-        <div class="admin_button" >
-         <input type="submit"  name="admin" value="Master User" >
-        </div>
+        </center>
     </div>
 
+     <ul id="dropdown4" class="dropdown-content">
+        <li><a href="//master/user/add">Add User</a></li>
+        <li><a href="/master/user/modify">Modify User</a></li>
+         <li><a href="/master/user/reset">Reset Password</a> </li>
+    </ul>
 
-    <div class="card_container">
-        <div class="card" id="recommended">
-            <h1>Recommendations for you</h1>
-            Ndd fkkno fifojo m foijjio ckof cqfiojqi ,modIDN FFJFIJ jnnc foncc fejioj shjs dshfih dDUHUD  DIohinf fajfaf
-            jo m foijjio ckof cqfiojqi ,modIDN FFJFIJ jnnc foncc fejioj shjs dshfih dDUHUD  DIohinf fajfaf
-        </div>
+    <ul id="dropdown1" class="dropdown-content">
+        <li><a href="/shared-items">Manage Files</a></li>
+        <li><a class="dropdown-button" href="#!" data-activates="dropdown4">Manage Users<i class="material-icons right"></i></a></li>
+    </ul>
 
-        <div class="card" id="recentitems">
-            <h1>Recent Medias</h1>
-            Jo m foijjio ckof cqfiojqi ,modIDN FFJFIJ jnnc foncc fejioj shjs dshfih dDUHUD  DIohinf fajfaf jo m foijjio ckof cqfiojqi
-            modIDN FFJFIJ jnnc foncc fejioj shjs dshfih dDUHUD  DIohinf fajfaf
-        </div>
+    <ul id="dropdown2" class="dropdown-content">
+        <li><a href="/change-password">Change Password</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+
+    <ul id="dropdown3" class="dropdown-content">
+        <li><a href="/online">Online Media</a></li>
+        <li><a href="/upload">Upload MediaU</a></li>
+    </ul>
+
+    <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo"><img src="/static/images/logo2.png" style="display:inline-block;vertical-align: middle;"></a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="/#!">Home</a></li>
+        <li><a href="/explore">Explore</a></li>
+        <li><a href="/suggestions">Suggestions</a></li>
+        <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Master Access<i class="material-icons right"></i></a></li>
+        <li><a class="dropdown-button" href="#!" data-activates="dropdown2">Account<i class="material-icons right"></i></a></li>
+          <li><a class="dropdown-button" href="#!" data-activates="dropdown3">More<i class="material-icons right"></i></a></li>
+      </ul>
     </div>
+  </nav>
+
+<div class="row">
+      <div class="col s4 m4 offset-m2">
+        <div class="card-panel teal">
+          <ul>
+              <li>ihifa</li>
+              <li>iojfipjp</li>
+              <li>jhof ajffa</li>
+              <li>ojioff daf</li>
+              <li>opjoad fa</li>
+              <li>jiofa fa</li>
+              <li>jojaf df</li>
+
+          </ul>
+
+        </div>
+      </div>
+     <div class="col s4 m4">
+        <div class="card-panel teal">
+           <ul>
+              <li>ihifa</li>
+              <li>iojfipjp</li>
+              <li>jhof ajffa</li>
+              <li>ojioff daf</li>
+              <li>opjoad fa</li>
+              <li>jiofa fa</li>
+              <li>jojaf df</li>
+
+          </ul>
+        </div>
+      </div>
+</div>
+
     <center>
         <span class="media_button">
             <input type="submit"  name="media" value="Browse Media" >
         </span>
     </center>
 
+<script src="/static/js/jquery-2.1.4.js"></script>
+<script src="/static/js/materialize.js"></script>
+<script src="/static/js/script.js"></script>
 
 </body>
 </html>
