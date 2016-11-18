@@ -24,7 +24,8 @@ urlpatterns = [
         name='master-user-modify'),
     url(r'^suggestions/?', views.show_suggestions, name='show_suggestions'),
     url(r'^logout/?', views.logout, name='logout'),
-    url(r'^change-password/?', views.change_password, name='change_password'),
+    url(r'^change-password/?', views.change_password, name='change-password'),
+    url(r'^master/user/reset/?$', views.reset_password, name='reset-password'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

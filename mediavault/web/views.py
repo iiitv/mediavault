@@ -459,3 +459,26 @@ def change_password(request):
                   {'errors': errors, 'messages': messages,
                    'number_of_errors': len(errors),
                    'number_of_messages': len(messages)})
+
+
+def reset_password(request):
+    username = request.session.get('username', None)
+    if not username:
+        return redirect('/login?err=Login required')
+    user = User.objects.filter(username=username)
+    if len(user) == 0:
+        return redirect('/login?err=No such user')
+    user = user[0]
+    if not user.is_superuser:
+        return redirect('/')
+    messages = []
+    if request.POST.get('reset', None):
+        user_ = User.objects.get(id=request.POST.get('id'))
+        password = request.POST.get('password')
+        user_.set_password(password)
+        user_.save()
+        messages.append('Password for {0} changed.'.format(user_))
+    users = User.objects.all()
+    return render(request, 'reset-password.html',
+                  {'messages': messages, 'number_of_messages': len(messages),
+                   'users': users})
