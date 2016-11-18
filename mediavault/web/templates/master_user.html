@@ -3,10 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>MediaVault | Master | User Management</title>
+    <link rel="stylesheet" href="/static/css/home.css" type="text/css" media="all">
 </head>
 <body>
-<a href="/master/user/add">Add User</a>
+<div class="header">
+    <center>
+	<img src="/static/images/logo1.png" style="display:inline-block;vertical-align: middle;">
+	<h1 style="display: inline-block; color:white;vertical-align: middle;">MediaVault - Home</h1>
+
+    </center>
+</div>
+<center>
+    <div class="add_user">
+    <a href="/master/user/add">
+        <input type="submit" name="add" value="Add User" >
+    </a>
+    </div>
 <br/>
-<a href="/master/user/modify">Modify User</a>
+    <div class="modify_user">
+    <a href="/master/user/modify">
+        <input type="submit" name="modify" value="Modify User" >
+    </a>
+    </div>
+</center>
+
 </body>
 </html>
