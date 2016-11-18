@@ -71,11 +71,7 @@
 <div style="color:white; margin-top:10px;margin-left:400px;">
 
 	{% for item in items %}
-	{% if item.type.type == 'Directory' %}
-	<li style="font-size: 27px;margin-top:10px;"><a href="/explore/{{item.id}}" style="color:white;">{{ item.name }}</a></li>
-	{% else %}
-	<li style="font-size: 27px;"><a href="/media/{{item.id}}" style="color:white;">{{ item.name }}</a></li>
-	{% endif %}
+        <li style="font-size: 27px;margin-top:10px;"><a href="/shared-items/{{item.id}}" style="color:white;">{{ item.name }}</a></li>
 	{% endfor %}
 </div>
 <!-- <div style="margin-top:20px;">

@@ -224,6 +224,7 @@ def media_page(request, id):
     number_of_ratings = len(ratings)
     if number_of_ratings > 0:
         average_rating = sum(ratings) / number_of_ratings
+        average_rating = '%.1f' % round(average_rating, 1)
     else:
         average_rating = None
     allowed_users = [acc.user for acc in
