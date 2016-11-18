@@ -41,6 +41,10 @@
     <p style="color:white; font-size:15px; margin-top: 5px; ">Item path - {{ item.path }}</p>
     <form method="post">
         {% csrf_token %}
+        <input type="submit" name="remove" value="Delete Item">
+    </form>
+    <form method="post">
+        {% csrf_token %}
         <p style="color:white; font-size:15px; margin-top: 5px; ">Grant Permissionn to...</p><br/>
         <select name="user_add_id">
 
@@ -51,7 +55,6 @@
         </select>
         <br/>
         <input type="submit" name="add-permission" value="add-permission">
-   	 	<input type="submit" name="remove" value="Delete Item">
     </form>
     <form method="post">
         {% csrf_token %}
@@ -65,5 +68,9 @@
     </form>
   </div>
   </center>
+    Children to this item - <br/>
+    {% for child in children %}
+        <li><a href="/shared-items/{{ child.id }}">{{ child.name }}</a></li>
+    {% endfor %}
 </body>
 </html>

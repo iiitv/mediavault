@@ -12,7 +12,7 @@ from .forms import LoginForm
 from .models import get_suggested_items, \
     add_item_recursive, remove_item_recursive, SharedItem, \
     grant_permission_recursive, remove_permission_recursive, ItemAccessibility, \
-    get_root_items, Suggestion
+    get_root_items, Suggestion, ItemRating
 
 
 def home(request):
@@ -93,15 +93,6 @@ def shared_items(request):
         except Exception:
             errors.append('Problem adding item(s)')
             traceback.print_exc()
-    elif request.POST.get('remove', None):
-        print("Request to remove items")
-        _id = request.POST.get('id')
-        item = SharedItem.objects.filter(id=int(_id))
-        if len(item) == 0:
-            errors.append('The item you are trying to delete is not found')
-        else:
-            item_count = remove_item_recursive(item[0])
-            messages.append('Successfully deleted {0} items'.format(item_count))
     # tree = get_root_items_recursive(user)
     return render(
         request,
@@ -134,6 +125,11 @@ def single_shared_item(request, id):
     if len(item) == 0:
         return render(request, 'notfound.html', {'error': 'No such item found'})
     item = item[0]
+    if request.POST.get('remove', None):
+        print("Request to remove items")
+        item_count = remove_item_recursive(item)
+        messages.append('Successfully deleted {0} items'.format(item_count))
+        return redirect('/shared-items/')
     if request.POST.get('add-permission', None):
         user_id = int(request.POST.get('user_add_id'))
         print("Request to add permission -- {0} -- {1}".format(id, user_id))
@@ -157,6 +153,7 @@ def single_shared_item(request, id):
     other_users = [inst.user for inst in
                    ItemAccessibility.objects.filter(item=item,
                                                     accessible=False)]
+    children = item.children.all()
     return render(request, 'single_item.html', {
         'number_of_errors': len(errors),
         'number_of_messages': len(messages),
@@ -164,7 +161,8 @@ def single_shared_item(request, id):
         'messages': messages,
         'allowed_users': allowed_users,
         'other_users': other_users,
-        'item': item
+        'item': item,
+        'children': children
     })
 
 
@@ -197,13 +195,45 @@ def media_page(request, id):
                                                         to_user=user_,
                                                         item=item)
         suggestion_instance.save()
+    if request.POST.get('rate', None):
+        try:
+            rating = request.POST.get('rating', None)
+            if rating:
+                rating = int(rating)
+                if rating > 10:
+                    rating = 10
+                elif rating < 0:
+                    rating = 0
+                rating_instance = ItemRating.objects.filter(item=item,
+                                                            user=user)
+                if len(rating_instance) == 0:
+                    rating_instance = ItemRating(item=item, user=user,
+                                                 rating=rating)
+                else:
+                    rating_instance = rating_instance[0]
+                    rating_instance.rating = rating
+                rating_instance.save()
+        except Exception:
+            traceback.print_exc()
     if media_type == 'directory':
         return redirect('/explore/{0}'.format(id))
+    ratings = [rating_instance.rating for rating_instance in
+               ItemRating.objects.filter(item=item)]
+    number_of_ratings = len(ratings)
+    if number_of_ratings > 0:
+        average_rating = sum(ratings) / number_of_ratings
+        average_rating = '%.1f' % round(average_rating, 1)
+    else:
+        average_rating = None
     allowed_users = [acc.user for acc in
                      ItemAccessibility.objects.filter(item=item,
                                                       accessible=True)]
+    item.views += 1
+    item.save()
     return render(request, 'media.html',
-                  {'type': media_type, 'item': item, 'users': allowed_users})
+                  {'type': media_type, 'item': item, 'users': allowed_users,
+                   'number_of_ratings': number_of_ratings,
+                   'average_rating': average_rating})
 
 
 def media_get(request, id):
@@ -377,3 +407,7 @@ def show_suggestions(request):
     suggestions = Suggestion.objects.filter(to_user=user).order_by('-time')[:15]
     return render(request, 'suggestions.html',
                   {'suggestions': suggestions, 'user': user})
+
+
+def media(request):
+    return redirect('/explore')

@@ -96,6 +96,7 @@ class SharedItem(models.Model):
     audio_sample_rate = models.PositiveIntegerField(null=True, blank=True)
     audio_bit_rate = models.PositiveIntegerField(null=True, blank=True)
     children = models.ManyToManyField('SharedItem', blank=True)
+    views = models.PositiveIntegerField(null=False, blank=False, default=0)
 
     def dictify(self):
         _dict = {
