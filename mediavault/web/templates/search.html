@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MediaVailt | Online Download Search</title>
+</head>
+<body>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" required="required" name="param"
+           placeholder="Enter search query">
+    <input type="submit" name="search" value="Search">
+</form>
+
+{% autoescape off %}
+{% for result in results %}
+<a href='/online/{{ result.id }}'>
+    <img src='{{ result.thumb }}'><br/>
+    Title - {{ result.title }}<br/>
+    Length - {{ result.length }}<br/>
+    Uploader - {{ result.uploader }}<br/>
+    Time - {{ resul.time }}<br/>
+    Views - {{ result.views }}<br/>
+    Description - {{ result.description }}<br/><br/><br/>
+</a>
+{% endfor %}
+{% endautoescape %}
+</body>
+</html>

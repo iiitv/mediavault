@@ -13,6 +13,7 @@ from .models import get_suggested_items, \
     add_item_recursive, remove_item_recursive, SharedItem, \
     grant_permission_recursive, remove_permission_recursive, ItemAccessibility, \
     get_root_items, Suggestion, ItemRating, get_latest_items
+from . import youtube_search, download_audio, download_video
 
 
 def home(request):
@@ -482,3 +483,42 @@ def reset_password(request):
     return render(request, 'reset-password.html',
                   {'messages': messages, 'number_of_messages': len(messages),
                    'users': users})
+
+
+def online(request):
+    username = request.session.get('username', None)
+    if not username:
+        return redirect('/login?err=Login required')
+    user = User.objects.filter(username=username)
+    if len(user) == 0:
+        return redirect('/login?err=No such user')
+    user = user[0]
+    results = []
+    if request.POST.get('search', None):
+        param = request.POST.get('param')
+        if len(param) > 0:
+            results = youtube_search(param)
+    return render(request, 'search.html',
+                  {'results': results, 'number': len(results)})
+
+
+def online_single(request, id):
+    username = request.session.get('username', None)
+    if not username:
+        return redirect('/login?err=Login required')
+    user = User.objects.filter(username=username)
+    if len(user) == 0:
+        return redirect('/login?err=No such user')
+    user = user[0]
+    if len(id) != 11:
+        return render(request, 'notfound.html', {'error': 'Invalid video id'})
+    messages = []
+    if request.POST.get('video', None):
+        download_video(id)
+        messages.append(
+            'Request to download video has been added and will be processed.')
+    elif request.POST.get('audio', None):
+        download_audio(id)
+        messages.append(
+            'Request to download audio has been added and will be processed.')
+    return render(request, 'online_single.html', {'messages': messages})

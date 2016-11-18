@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MediaVault | Download </title>
+</head>
+<body>
+{% for m in messages %}
+    {{ m }}
+{% endfor %}
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" name="video" value="Download Video">
+    <input type="submit" name="audio" value="Download Audio">
+</form>
+</body>
+</html>
