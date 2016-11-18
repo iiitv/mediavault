@@ -93,15 +93,6 @@ def shared_items(request):
         except Exception:
             errors.append('Problem adding item(s)')
             traceback.print_exc()
-    elif request.POST.get('remove', None):
-        print("Request to remove items")
-        _id = request.POST.get('id')
-        item = SharedItem.objects.filter(id=int(_id))
-        if len(item) == 0:
-            errors.append('The item you are trying to delete is not found')
-        else:
-            item_count = remove_item_recursive(item[0])
-            messages.append('Successfully deleted {0} items'.format(item_count))
     # tree = get_root_items_recursive(user)
     return render(
         request,
@@ -134,6 +125,11 @@ def single_shared_item(request, id):
     if len(item) == 0:
         return render(request, 'notfound.html', {'error': 'No such item found'})
     item = item[0]
+    if request.POST.get('remove', None):
+        print("Request to remove items")
+        item_count = remove_item_recursive(item)
+        messages.append('Successfully deleted {0} items'.format(item_count))
+        return redirect('/shared-items/')
     if request.POST.get('add-permission', None):
         user_id = int(request.POST.get('user_add_id'))
         print("Request to add permission -- {0} -- {1}".format(id, user_id))
@@ -157,6 +153,7 @@ def single_shared_item(request, id):
     other_users = [inst.user for inst in
                    ItemAccessibility.objects.filter(item=item,
                                                     accessible=False)]
+    children = item.children.all()
     return render(request, 'single_item.html', {
         'number_of_errors': len(errors),
         'number_of_messages': len(messages),
@@ -164,7 +161,8 @@ def single_shared_item(request, id):
         'messages': messages,
         'allowed_users': allowed_users,
         'other_users': other_users,
-        'item': item
+        'item': item,
+        'children': children
     })
 
 
@@ -409,3 +407,7 @@ def show_suggestions(request):
     suggestions = Suggestion.objects.filter(to_user=user).order_by('-time')[:15]
     return render(request, 'suggestions.html',
                   {'suggestions': suggestions, 'user': user})
+
+
+def media(request):
+    return redirect('/explore')
