@@ -421,3 +421,41 @@ def logout(request):
     except KeyError:
         pass
     return redirect('/login?err=You\'ve been logged out.')
+
+
+def change_password(request):
+    username = request.session.get('username', None)
+    if not username:
+        return redirect('/login?err=Login required')
+    user = User.objects.filter(username=username)
+    if len(user) == 0:
+        return redirect('/login?err=No such user')
+    user = user[0]
+    errors = []
+    messages = []
+    if request.POST.get('change', None):
+        old_password = request.POST.get('old', None)
+        if old_password:
+            new_password = request.POST.get('new', None)
+            if new_password:
+                repeat_password = request.POST.get('repeat', None)
+                if repeat_password:
+                    if repeat_password == new_password:
+                        if user.check_password(old_password):
+                            user.set_password(new_password)
+                            user.save()
+                            messages.append('Password changes successfully')
+                        else:
+                            errors.append('Incorrect old password')
+                    else:
+                        errors.append('Passwords do not match')
+                else:
+                    errors.append('Please repeat password')
+            else:
+                errors.append('Please provide new password')
+        else:
+            errors.append('Please provide old password')
+    return render(request, 'change-password.html',
+                  {'errors': errors, 'messages': messages,
+                   'number_of_errors': len(errors),
+                   'number_of_messages': len(messages)})
