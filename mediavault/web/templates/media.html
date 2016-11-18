@@ -34,5 +34,33 @@ Mime not recognized.
     </select>
     <input type="submit" name="suggest">
 </form>
+
+{% if number_of_ratings > 0 %}
+{{ average_rating }}/10.0 from {{ number_of_ratings }} rating{% if
+number_of_ratings > 1 %}s{% endif %}
+{% else %}
+This media has not been rated yet.
+{% endif %}
+
+Number of views - {{ item.views }}
+
+<form method="post">
+    <label>Rate this media...</label>
+    {% csrf_token %}
+    <select name="rating">
+        <option value="10">10</option>
+        <option value="9">9</option>
+        <option value="8">8</option>
+        <option value="7">7</option>
+        <option value="6">6</option>
+        <option value="5">5</option>
+        <option value="4">4</option>
+        <option value="3">3</option>
+        <option value="2">2</option>
+        <option value="1">1</option>
+        <option value="0">0</option>
+    </select>
+    <input type="submit" name="rate">
+</form>
 </body>
 </html>

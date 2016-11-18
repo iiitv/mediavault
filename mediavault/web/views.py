@@ -12,7 +12,7 @@ from .forms import LoginForm
 from .models import get_suggested_items, \
     add_item_recursive, remove_item_recursive, SharedItem, \
     grant_permission_recursive, remove_permission_recursive, ItemAccessibility, \
-    get_root_items, Suggestion
+    get_root_items, Suggestion, ItemRating
 
 
 def home(request):
@@ -197,13 +197,44 @@ def media_page(request, id):
                                                         to_user=user_,
                                                         item=item)
         suggestion_instance.save()
+    if request.POST.get('rate', None):
+        try:
+            rating = request.POST.get('rating', None)
+            if rating:
+                rating = int(rating)
+                if rating > 10:
+                    rating = 10
+                elif rating < 0:
+                    rating = 0
+                rating_instance = ItemRating.objects.filter(item=item,
+                                                            user=user)
+                if len(rating_instance) == 0:
+                    rating_instance = ItemRating(item=item, user=user,
+                                                 rating=rating)
+                else:
+                    rating_instance = rating_instance[0]
+                    rating_instance.rating = rating
+                rating_instance.save()
+        except Exception:
+            traceback.print_exc()
     if media_type == 'directory':
         return redirect('/explore/{0}'.format(id))
+    ratings = [rating_instance.rating for rating_instance in
+               ItemRating.objects.filter(item=item)]
+    number_of_ratings = len(ratings)
+    if number_of_ratings > 0:
+        average_rating = sum(ratings) / number_of_ratings
+    else:
+        average_rating = None
     allowed_users = [acc.user for acc in
                      ItemAccessibility.objects.filter(item=item,
                                                       accessible=True)]
+    item.views += 1
+    item.save()
     return render(request, 'media.html',
-                  {'type': media_type, 'item': item, 'users': allowed_users})
+                  {'type': media_type, 'item': item, 'users': allowed_users,
+                   'number_of_ratings': number_of_ratings,
+                   'average_rating': average_rating})
 
 
 def media_get(request, id):
