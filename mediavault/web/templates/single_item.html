@@ -3,74 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <title>MediaVault | Shared Items | {{ item.name }}</title>
-     <style>
-    
-	body { 
-	  background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url("../static/images/2.jpeg") no-repeat center center fixed; 
-	  -webkit-background-size: cover;
-	  -moz-background-size: cover;
-	  -o-background-size: cover;
-	  background-size: cover;
-	}
-	input[type=submit]{
-    background-color: white;
-    border: none;
-    color: Black;
-    height:30px;
-    padding: 16px 32px;
-    text-decoration: none;
-    margin: 4px 2px;
-    cursor: pointer;
-	}
-	select{
-		height:30px;
-		width:200px;
-		background-color: white;
+    <link rel="stylesheet" href="/static/css/home.css" type="text/css" media="all">
 
+    <style>
+    
+	#container {
+    width: 900px;
+    margin-left:200px;
+    margin-top:40px;
+    
+    margin: auto;
 	}
-	</style>
+	#first {
+	    width: 300px;
+	    float: left;
+	    height: 300px;
+	}
+	#second {
+	    width: 300px;
+	    float: left;
+	    height: 300px;
+	    
+	}
+	#third {
+		width: 300px;
+	    float: left;
+	    height: 300px;
+	   
+	}
+	#clear {
+	    clear: both;
+	}
+    </style>
 </head>
 <body>
-<center>
-<center>
+
+<div class="header">
+    <center>
 	<img src="/static/images/logo1.png" style="display:inline-block;vertical-align: middle;">
 	<h1 style="display: inline-block; color:white;vertical-align: middle;">MediaVault - {{ item.name }}</h1>
-</center>
-<div style="">
-    <p style="color:white; font-size:15px; margin-top: 5px; ">Item selected - {{ item.name }}</p><br/>
-    <p style="color:white; font-size:15px; margin-top: 5px; ">Item path - {{ item.path }}</p>
-    <form method="post">
-        {% csrf_token %}
-        <input type="submit" name="remove" value="Delete Item">
-    </form>
-    <form method="post">
-        {% csrf_token %}
-        <p style="color:white; font-size:15px; margin-top: 5px; ">Grant Permissionn to...</p><br/>
-        <select name="user_add_id">
 
-            {% for user in other_users %}
-                <option value="{{ user.id }}">{{user.username}}</option>
-                <option value="User1">User1</option>
-            {% endfor %}
-        </select>
-        <br/>
-        <input type="submit" name="add-permission" value="add-permission">
-    </form>
-    <form method="post">
-        {% csrf_token %}
-        <p style="color:white; font-size:15px; margin-top: 30px; ">Remove Permission from...</p><br/>
-        <select name="user_remove_id">
-            {% for user in allowed_users %}
-                <option value="{{ user.id }}">{{user.username}}</option>
-            {% endfor %}
-        </select><br/>
-        <input type="submit" name="remove-permission" value="remove-permission">
-    </form>
-  </div>
-  </center>
-    Children to this item - <br/>
-    {% for child in children %}
-        <li><a href="/shared-items/{{ child.id }}">{{ child.name }}</a></li>
-    {% endfor %}
+    </center>
+</div>
+    <br/><br/>
+    <div class="container" style="margin-left: 200px;">
+    
+    	<div id="first">
+	    <h3 style="font-size:15px; margin-top: 5px; ">Item path -<br/> {{ item.path }}</h3>
+	    <form method="post">
+	        {% csrf_token %}
+	        <input type="submit" name="remove" value="Delete Item">
+	    </form>
+	    </div>
+	    <div id="second">
+	    <form method="post">
+	        {% csrf_token %}
+	        <h3 style="font-size:15px; margin-top: 5px; ">Grant Permissionn to...</h3><br/>
+	        <select name="user_add_id">
+
+	            {% for user in other_users %}
+	                <option value="{{ user.id }}">{{user.username}}</option>
+	                <option value="User1">User1</option>
+	            {% endfor %}
+	        </select>
+	        <br/>
+	        <input type="submit" name="add-permission" value="add-permission">
+	    </form>
+	    </div>
+	    <div id="third">
+	    <form method="post">
+	        {% csrf_token %}
+	        <h3 style="font-size:15px; margin-top: 5px; ">Remove Permission from...</h3><br/>
+	        <select name="user_remove_id">
+	            {% for user in allowed_users %}
+	                <option value="{{ user.id }}">{{user.username}}</option>
+	            {% endfor %}
+	        </select><br/>
+	        <input type="submit" name="remove-permission" value="remove-permission">
+	    </form>
+	    </div>
+	    <div id="clear"></div>
+	   
+	  </div>
+	 <div style="margin-left:500px;">
+	 <h2 style="font-size:15px; margin-top: 5px; ">Children to this Item</h2><br/>
+	    
+	    {% for child in children %}
+	        <li><a href="/shared-items/{{ child.id }}" style="color:black;">{{ child.name }}</a></li>
+	    {% endfor %}
+	</div>
 </body>
 </html>

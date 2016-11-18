@@ -3,53 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>MediaVault | User Management | Modify User</title>
-     <style>
-    body{
-        background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url("/static/images/download.jpg") no-repeat center center fixed; 
-      -webkit-background-size: cover;
-      -moz-background-size: cover;
-      -o-background-size: cover;
-      background-size: cover;
-
-    }
-    input[type=text] {
-    border: 2px solid;
-    height:30px;
-    width:250px;
-    border-radius: 4px;
-    }
-    input[type=password] {
-    border: 2px solid;
-    height:30px;
-    width:250px;
-    border-radius: 4px;
-    }
-    input[type=email] {
-    border: 2px solid;
-    height:30px;
-    width:250px;
-    border-radius: 4px;
-    }
-    input[type=submit]{
-    border: 2px solid;
-    height:30px;
-    width:100px;
-    border-radius: 4px;
-    margin-top:20px;
-    }
-    select{
-        height:30px;
-        width:230px;
-        background-color: white;
-
-    }
-    </style>
+    <link rel="stylesheet" href="/static/css/home.css" type="text/css" media="all">
 </head>
 <body>
-<center>
-    <img src="/static/images/logo1.png" style="display:inline-block;vertical-align: middle;">
-    <h1 style="display: inline-block; color:white;vertical-align: middle;">MediaVault - Modify User</h1>
-</center>
+<div class="header">
+    <center>
+	<img src="/static/images/logo1.png" style="display:inline-block;vertical-align: middle;">
+	<h1 style="display: inline-block; color:white;vertical-align: middle;">MediaVault - Modify User</h1>
+
+    </center>
+</div>
 {% if number_of_errors > 0 %}
 {% for error in errors %}
 {{error}}
@@ -62,7 +25,7 @@
 {% endif %}
 
 <center>
-<div style="background-color: white;height:400px;width:300px;">
+<div style="background-color: white;height:350px;width:300px;border:solid;border-radius: 5px;margin-top:40px; " >
 <div style="float:left; margin-top:20px;margin-left:20px;">
 <form method="post">
     {% csrf_token %}
