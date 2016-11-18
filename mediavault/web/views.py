@@ -12,7 +12,7 @@ from .forms import LoginForm
 from .models import get_suggested_items, \
     add_item_recursive, remove_item_recursive, SharedItem, \
     grant_permission_recursive, remove_permission_recursive, ItemAccessibility, \
-    get_root_items, Suggestion, ItemRating
+    get_root_items, Suggestion, ItemRating, get_latest_items
 
 
 def home(request):
@@ -25,13 +25,15 @@ def home(request):
     user = user[0]
     # item_tree = get_root_items_recursive(user)
     suggested_items = get_suggested_items(user)
+    latest_items = get_latest_items(user)
     return render(
         request,
         'home.html',
         {
             'is_admin': user.is_superuser,
             # 'tree': item_tree,
-            'suggestions': suggested_items
+            'suggestions': suggested_items,
+            'latest': latest_items
         }
     )
 
