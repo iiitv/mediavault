@@ -413,3 +413,11 @@ def show_suggestions(request):
 
 def media(request):
     return redirect('/explore')
+
+
+def logout(request):
+    try:
+        del request.session['username']
+    except KeyError:
+        pass
+    return redirect('/login?err=You\'ve been logged out.')
