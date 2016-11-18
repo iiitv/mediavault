@@ -3,8 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>MediaVault | Master | User Management | Add User</title>
+     <style>
+    body{
+        background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url("/static/images/download.jpg") no-repeat center center fixed; 
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+
+    }
+    input[type=text] {
+    border: 2px solid;
+    height:30px;
+    width:250px;
+    border-radius: 4px;
+    }
+    input[type=password] {
+    border: 2px solid;
+    height:30px;
+    width:250px;
+    border-radius: 4px;
+    }
+    input[type=email] {
+    border: 2px solid;
+    height:30px;
+    width:250px;
+    border-radius: 4px;
+    }
+    input[type=submit]{
+    border: 2px solid;
+    height:30px;
+    width:100px;
+    border-radius: 4px;
+    margin-top:20px;
+    }
+    </style>
 </head>
+
 <body>
+<center>
+    <img src="/static/images/logo1.png" style="display:inline-block;vertical-align: middle;">
+    <h1 style="display: inline-block; color:white;vertical-align: middle;">MediaVault - Add User</h1>
+</center>
 {% if number_of_errors > 0 %}
 {% for error in errors %}
 {{error}}
@@ -15,16 +55,26 @@
 {{error}}
 {% endfor %}
 {% endif %}
+<center>
+<div style="background-color: white;height:350px;width:300px; >
 <form method="post">
     {% csrf_token %}
-    <input type="text" name="username" placeholder="Username" required>
+    <div style="float:left; margin-top:20px;margin-left:20px;">
+    <label for="username" style="float:left;font-size: 20px;">Username:</label><br/>
+    <input type="text" name="username" placeholder="Username" required><br/>
+    <label for="username" style="float:left; font-size: 20px;margin-top:10px;">Password:</label><br/>
     <input type="password" minlength="8" name="password" placeholder="Password"
-           required>
-    <input type="email" name="email" placeholder="Email Address" required>
-    <label>Create as Superuser
+           required><br/>
+    <label for="username" style="float:left; font-size: 20px;margin-top:10px;">Email: </label><br/>       
+    <input type="email" name="email" placeholder="Email Address" required><br/>
+
+    <label style="margin-top:20px;">Create as Superuser
         <input type="checkbox" name="is_superuser" value="Y">
-    </label>
+    </label><br/>
     <input type="submit" name="create">
+    </div>
 </form>
+</div>
+</center>
 </body>
 </html>

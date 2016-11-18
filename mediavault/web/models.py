@@ -4,6 +4,7 @@ and methods to manipulate them.
 """
 import os
 from datetime import datetime
+from operator import itemgetter
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -97,6 +98,7 @@ class SharedItem(models.Model):
     audio_bit_rate = models.PositiveIntegerField(null=True, blank=True)
     children = models.ManyToManyField('SharedItem', blank=True)
     views = models.PositiveIntegerField(null=False, blank=False, default=0)
+    seen_by = models.ManyToManyField(User, blank=True)
 
     def dictify(self):
         _dict = {
@@ -238,10 +240,6 @@ def get_root_items_recursive(user):
     return tree
 
 
-def get_suggested_items(user):  # TODO : Implement it
-    pass
-
-
 def add_item_recursive(location, user, permission, parent=None):
     print('Adding Item - {0} {1} {2} {3}'.format(location, user, permission,
                                                  parent))
@@ -354,3 +352,41 @@ def remove_permission(item, user):
     instance = ItemAccessibility.objects.get(user=user, item=item)
     instance.accessible = False
     instance.save()
+
+
+def get_suggested_items(user):
+    items = [instance.item for instance in
+             ItemAccessibility.objects.filter(user=user, accessible=True) if
+             instance.item.type.type != 'Directory']
+    max_views = max([item.views for item in items])
+    max_views = max_views + 1 if max_views == 0 else max_views
+    items_lot = [(item, item.views / max_views * 10.0) for item in items]
+    seen_list = []
+    unseen_list = []
+    for item, score in items_lot:
+        ratings = [rating_instance.rating for rating_instance in
+                   ItemRating.objects.filter(item=item)]
+        number_of_ratings = len(ratings)
+        if number_of_ratings > 0:
+            average_rating = sum(ratings) / number_of_ratings
+        else:
+            average_rating = 5.0
+        tpl = (item, score + average_rating)
+        if user in list(item.seen_by.all()):
+            seen_list.append(tpl)
+        else:
+            unseen_list.append(tpl)
+    seen_list = sorted(seen_list, key=itemgetter(1), reverse=True)
+    unseen_list = sorted(unseen_list, key=itemgetter(1), reverse=True)
+    if len(seen_list) >= 3:
+        ret_lst = unseen_list[:7] + seen_list[:3]
+    else:
+        ret_lst = unseen_list[:10 - len(seen_list)] + seen_list
+    return [i[0] for i in ret_lst]
+
+
+def get_latest_items(user, count=10):
+    items = [instance.item for instance in
+             ItemAccessibility.objects.filter(user=user, accessible=True) if
+             instance.item.type.type != 'Directory']
+    return items[:count]
