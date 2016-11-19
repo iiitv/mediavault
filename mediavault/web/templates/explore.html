@@ -3,19 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>MediaVault | Explore</title>
+    <link rel="stylesheet" href="/static/css/materialize.css" type="text/css" media="all">
     <link rel="stylesheet" href="/static/css/home.css" type="text/css" media="all">
-
-    
-
 </head>
 <body>
-<div class="header">
+ <div class="header">
     <center>
-	<img src="/static/images/logo1.png" style="display:inline-block;vertical-align: middle;">
-	<h1 style="display: inline-block; color:white;vertical-align: middle;">MediaVault - Explore</h1>
-
-    </center>
+	<h1 style="display: inline-block; color:white;vertical-align: middle;">MediaVault - Home</h1>
+        </center>
  </div>
+
+    <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo"><img src="/static/images/logo2.png" style="display:inline-block;vertical-align: middle;"></a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="/#!">Home</a></li>
+      </ul>
+    </div>
+  </nav>
 <div style="color:white; margin-top:30px; margin-left:400px;">
 
 	{% for item in items %}

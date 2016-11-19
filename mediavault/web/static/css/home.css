@@ -41,6 +41,29 @@ h1 {
 
 }
 
+.dropdown-content {
+   overflow-y: visible;
+}
+
+.dropdown-content .dropdown-content {
+   margin-left: 100%;
+}
+
+.teal h2 {
+    font-size: 2em;
+    text-align: center;
+}
+
+
+.list {
+        line-height: 2em;
+}
+
+nav ul a {
+    font-size: 1.2rem;
+    font-weight: bolder;
+}
+
 input[type="submit"] {
     border-radius: 5px;
     /*border: 1px solid white;*/
