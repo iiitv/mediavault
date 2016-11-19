@@ -330,27 +330,31 @@ def master_user_add(request):
         if request.POST.get('username', None):
             username = request.POST.get('username')
             password = request.POST.get('password', None)
+            repeat = request.POST.get('repeat', None)
             email = request.POST.get('email', None)
             print('Received {0} {1} {2}'.format(username, password, email))
             if password:
                 if len(password) >= 8:
-                    try:
-                        print('Trying to create user')
-                        new_user = User.objects.create_user(username=username,
-                                                            email=email,
-                                                            password=password)
-                        is_superuser = request.POST.get('is_superuser', None)
-                        if is_superuser:
-                            if is_superuser == 'Y':
-                                print('Making superuser')
-                                new_user.is_superuser = True
-                        new_user.save()
-                        print('Done.. Saved')
-                        messages.append('User created successfully')
-                    except Exception:
-                        print('Error occurred')
-                        errors.append('Unable to add user')
-                        traceback.print_exc()
+                    if password == repeat:
+                        try:
+                            print('Trying to create user')
+                            new_user = User.objects.create_user(username=username,
+                                                                email=email,
+                                                                password=password)
+                            is_superuser = request.POST.get('is_superuser', None)
+                            if is_superuser:
+                                if is_superuser == 'Y':
+                                    print('Making superuser')
+                                    new_user.is_superuser = True
+                            new_user.save()
+                            print('Done.. Saved')
+                            messages.append('User created successfully')
+                        except Exception:
+                            print('Error occurred')
+                            errors.append('Unable to add user')
+                            traceback.print_exc()
+                    else:
+                        errors.append('Passwords do not match')
                 else:
                     errors.append(
                         'Password should be more than 8 characters long')
