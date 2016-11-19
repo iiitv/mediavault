@@ -90,3 +90,4 @@ ENV/
 /mediavault/db.sqlite3
 /mediavault/web/migrations
 /.idea
+/mediavault/db.sqlite3-journal
