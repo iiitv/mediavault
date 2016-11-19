@@ -358,7 +358,7 @@ def get_suggested_items(user):
     items = [instance.item for instance in
              ItemAccessibility.objects.filter(user=user, accessible=True) if
              instance.item.type.type != 'Directory']
-    max_views = max([item.views for item in items]) if len(items)>0 else 1
+    max_views = max([item.views for item in items]) if len(items) > 0 else 1
     max_views = max_views + 1 if max_views == 0 else max_views
     items_lot = [(item, item.views / max_views * 10.0) for item in items]
     seen_list = []

@@ -23,7 +23,11 @@ urlpatterns = [
     url(r'^master/user/modify/?$', views.master_user_modify,
         name='master-user-modify'),
     url(r'^suggestions/?', views.show_suggestions, name='show_suggestions'),
-    url(r'^logout/?', views.logout, name='logout')
+    url(r'^logout/?', views.logout, name='logout'),
+    url(r'^online/?$', views.online, name='online'),
+    url(r'^online/(?P<id>.*)/?$', views.online_single, name='online_single'),
+    url(r'^change-password/?', views.change_password, name='change_password'),
+    url(r'^master/user/reset/?$', views.reset_password, name='reset-password'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

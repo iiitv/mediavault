@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from rest_framework.authtoken.models import Token
 
+from . import  youtube_search, download_video, download_audio
 from .forms import LoginForm
 from .models import get_suggested_items, \
     add_item_recursive, remove_item_recursive, SharedItem, \
@@ -191,12 +192,14 @@ def media_page(request, id):
                       {'error': 'The item you are looking for is not found on '
                                 'the given location.'})
     media_type = item.media_type()
+    increment = True
     if request.POST.get('suggest', None):
         user_ = User.objects.get(id=request.POST.get('id_suggest_user'))
         suggestion_instance = Suggestion.objects.create(from_user=user,
                                                         to_user=user_,
                                                         item=item)
         suggestion_instance.save()
+        increment = False
     if request.POST.get('rate', None):
         try:
             rating = request.POST.get('rating', None)
@@ -217,6 +220,7 @@ def media_page(request, id):
                 rating_instance.save()
         except Exception:
             traceback.print_exc()
+        increment = False
     if media_type == 'directory':
         return redirect('/explore/{0}'.format(id))
     ratings = [rating_instance.rating for rating_instance in
@@ -230,8 +234,9 @@ def media_page(request, id):
     allowed_users = [acc.user for acc in
                      ItemAccessibility.objects.filter(item=item,
                                                       accessible=True)]
-    item.views += 1
-    item.save()
+    if increment:
+        item.views += 1
+        item.save()
     return render(request, 'media.html',
                   {'type': media_type, 'item': item, 'users': allowed_users,
                    'number_of_ratings': number_of_ratings,
@@ -421,3 +426,103 @@ def logout(request):
     except KeyError:
         pass
     return redirect('/login?err=You\'ve been logged out.')
+
+
+def change_password(request):
+    username = request.session.get('username', None)
+    if not username:
+        return redirect('/login?err=Login required')
+    user = User.objects.filter(username=username)
+    if len(user) == 0:
+        return redirect('/login?err=No such user')
+    user = user[0]
+    errors = []
+    messages = []
+    if request.POST.get('change', None):
+        old_password = request.POST.get('old', None)
+        if old_password:
+            new_password = request.POST.get('new', None)
+            if new_password:
+                repeat_password = request.POST.get('repeat', None)
+                if repeat_password:
+                    if repeat_password == new_password:
+                        if user.check_password(old_password):
+                            user.set_password(new_password)
+                            user.save()
+                            messages.append('Password changes successfully')
+                        else:
+                            errors.append('Incorrect old password')
+                    else:
+                        errors.append('Passwords do not match')
+                else:
+                    errors.append('Please repeat password')
+            else:
+                errors.append('Please provide new password')
+        else:
+            errors.append('Please provide old password')
+    return render(request, 'change-password.html',
+                  {'errors': errors, 'messages': messages,
+                   'number_of_errors': len(errors),
+                   'number_of_messages': len(messages)})
+
+
+def reset_password(request):
+    username = request.session.get('username', None)
+    if not username:
+        return redirect('/login?err=Login required')
+    user = User.objects.filter(username=username)
+    if len(user) == 0:
+        return redirect('/login?err=No such user')
+    user = user[0]
+    if not user.is_superuser:
+        return redirect('/')
+    messages = []
+    if request.POST.get('reset', None):
+        user_ = User.objects.get(id=request.POST.get('id'))
+        password = request.POST.get('password')
+        user_.set_password(password)
+        user_.save()
+        messages.append('Password for {0} changed.'.format(user_))
+    users = User.objects.all()
+    return render(request, 'reset-password.html',
+                  {'messages': messages, 'number_of_messages': len(messages),
+                   'users': users})
+
+
+def online(request):
+    username = request.session.get('username', None)
+    if not username:
+        return redirect('/login?err=Login required')
+    user = User.objects.filter(username=username)
+    if len(user) == 0:
+        return redirect('/login?err=No such user')
+    user = user[0]
+    results = []
+    if request.POST.get('search', None):
+        param = request.POST.get('param')
+        if len(param) > 0:
+            results = youtube_search(param)
+    return render(request, 'search.html',
+                  {'results': results, 'number': len(results)})
+
+
+def online_single(request, id):
+    username = request.session.get('username', None)
+    if not username:
+        return redirect('/login?err=Login required')
+    user = User.objects.filter(username=username)
+    if len(user) == 0:
+        return redirect('/login?err=No such user')
+    user = user[0]
+    if len(id) != 11:
+        return render(request, 'notfound.html', {'error': 'Invalid video id'})
+    messages = []
+    if request.POST.get('video', None):
+        download_video(id)
+        messages.append(
+            'Request to download video has been added and will be processed.')
+    elif request.POST.get('audio', None):
+        download_audio(id)
+        messages.append(
+            'Request to download audio has been added and will be processed.')
+    return render(request, 'online_single.html', {'messages': messages})
