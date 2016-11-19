@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from rest_framework.authtoken.models import Token
 
-from . import  youtube_search, download_video, download_audio
+from . import youtube_search, download_video, download_audio
 from .forms import LoginForm
 from .models import get_suggested_items, \
     add_item_recursive, remove_item_recursive, SharedItem, \
@@ -34,7 +34,8 @@ def home(request):
             'is_admin': user.is_superuser,
             # 'tree': item_tree,
             'suggestions': suggested_items,
-            'latest': latest_items
+            'latest': latest_items,
+            'current_user': user
         }
     )
 
@@ -106,7 +107,8 @@ def shared_items(request):
             'number_of_mesages': len(messages),
             'errors': errors,
             'messages': messages,
-            'items': get_root_items(user)
+            'items': get_root_items(user),
+            'current_user': user
         }
     )
 
@@ -240,7 +242,7 @@ def media_page(request, id):
     return render(request, 'media.html',
                   {'type': media_type, 'item': item, 'users': allowed_users,
                    'number_of_ratings': number_of_ratings,
-                   'average_rating': average_rating})
+                   'average_rating': average_rating, 'current_user': user})
 
 
 def media_get(request, id):
@@ -273,7 +275,8 @@ def explore_root(request):
         return redirect('/login?err=No such user')
     user = user[0]
     items = get_root_items(user)
-    return render(request, 'explore.html', {'items': items})
+    return render(request, 'explore.html', {'items': items,
+                                            'current_user': user})
 
 
 def explore(request, id):
@@ -297,7 +300,8 @@ def explore(request, id):
     if item.type.type != 'Directory':
         return redirect('/media/{0}'.format(id))
     return render(request, 'explore.html',
-                  {'items': item.children.all().order_by('name')})
+                  {'items': item.children.all().order_by('name'),
+                   'current_user': user})
 
 
 def master_user(request):
@@ -310,7 +314,7 @@ def master_user(request):
     user = user[0]
     if not user.is_superuser:
         return redirect('/')
-    return render(request, 'master_user.html')
+    return render(request, 'master_user.html', {'current_user': user})
 
 
 def master_user_add(request):
@@ -338,10 +342,12 @@ def master_user_add(request):
                     if password == repeat:
                         try:
                             print('Trying to create user')
-                            new_user = User.objects.create_user(username=username,
-                                                                email=email,
-                                                                password=password)
-                            is_superuser = request.POST.get('is_superuser', None)
+                            new_user = User.objects.create_user(
+                                username=username,
+                                email=email,
+                                password=password)
+                            is_superuser = request.POST.get('is_superuser',
+                                                            None)
                             if is_superuser:
                                 if is_superuser == 'Y':
                                     print('Making superuser')
@@ -363,7 +369,7 @@ def master_user_add(request):
     return render(request, 'master_user_add.html',
                   {'number_of_errors': len(errors),
                    'number_of_messages': len(messages), 'errors': errors,
-                   'messages': messages})
+                   'messages': messages, 'current_user': user})
 
 
 def master_user_modify(request):
@@ -404,7 +410,7 @@ def master_user_modify(request):
                   {'number_of_errors': len(errors),
                    'number_of_messages': len(messages), 'errors': errors,
                    'messages': messages, 'all_users': all_users,
-                   'admins': admins, 'others': other})
+                   'admins': admins, 'others': other, 'current_user': user})
 
 
 def show_suggestions(request):
@@ -417,7 +423,7 @@ def show_suggestions(request):
     user = user[0]
     suggestions = Suggestion.objects.filter(to_user=user).order_by('-time')[:15]
     return render(request, 'suggestions.html',
-                  {'suggestions': suggestions, 'user': user})
+                  {'suggestions': suggestions, 'current_user': user})
 
 
 def media(request):
@@ -467,7 +473,7 @@ def change_password(request):
     return render(request, 'change-password.html',
                   {'errors': errors, 'messages': messages,
                    'number_of_errors': len(errors),
-                   'number_of_messages': len(messages)})
+                   'number_of_messages': len(messages), 'current_user': user})
 
 
 def reset_password(request):
@@ -490,7 +496,7 @@ def reset_password(request):
     users = User.objects.all()
     return render(request, 'reset-password.html',
                   {'messages': messages, 'number_of_messages': len(messages),
-                   'users': users})
+                   'users': users, 'current_user': user})
 
 
 def online(request):
@@ -507,7 +513,8 @@ def online(request):
         if len(param) > 0:
             results = youtube_search(param)
     return render(request, 'search.html',
-                  {'results': results, 'number': len(results)})
+                  {'results': results, 'number': len(results),
+                   'current_user': user})
 
 
 def online_single(request, id):
@@ -529,4 +536,5 @@ def online_single(request, id):
         download_audio(id)
         messages.append(
             'Request to download audio has been added and will be processed.')
-    return render(request, 'online_single.html', {'messages': messages})
+    return render(request, 'online_single.html',
+                  {'messages': messages, 'current_user': user})
