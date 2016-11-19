@@ -35,7 +35,6 @@
 
     <ul id="dropdown3" class="dropdown-content">
         <li><a href="/online">Online Media</a></li>
-        <li><a href="/upload">Upload Media</a></li>
     </ul>
 
     <nav>
@@ -57,30 +56,19 @@
         <div class="card-panel teal">
             <h2>Recommended Media</h2>
           <ol class="list">
-              <li>01 - High Heels - Ki and Ka [Songspk.LINK] (copy).mp3</li>
-              <li>01 - Jab Tak Hai Jaan (The Poem).mp3</li>
-              <li>01 Ice Cream - The Xpose (Yo Yo Honey Singh).mp3</li>
-              <li>01_-_Jeene_Laga_Hoon(freemaza.in).mp3</li>
-              <li>Hum Mar Jayenge - Aashiqui 2[FreshMaza.Info].mp4</li>
-              <li>Tum Hi Ho Meri Aashiqui- Aashiqui 2(2013)[FreshMaza.Info].mp4</li>
-              <li>IMG_20160227_210218603.jpg</li>
-
+              {% for i in suggestions %}
+                <li><a href="/explore/{{ i.id }}">{{ i.name }}</a> </li>
+              {% endfor %}
           </ol>
-
         </div>
       </div>
      <div class="col s4 m4">
         <div class="card-panel teal">
-            <h2>Recent Items</h2>
+            <h2>Recently Added Items</h2>
            <ol class="list">
-              <li>Hum Mar Jayenge - Aashiqui 2[FreshMaza.Info].mp4</li>
-              <li>Tum Hi Ho Meri Aashiqui- Aashiqui 2(2013)[FreshMaza.Info].mp4</li>
-              <li>IMG_20160227_210218603.jpg</li>
-              <li>01 - High Heels - Ki and Ka [Songspk.LINK] (copy).mp3</li>
-              <li>01 - Jab Tak Hai Jaan (The Poem).mp3</li>
-              <li>01 Ice Cream - The Xpose (Yo Yo Honey Singh).mp3</li>
-              <li>IMG_20160228_193057573_TOP.jpg</li>
-
+               {% for i in latest %}
+               <li><a href="/explore/{{ i.id }}">{{ i.name }}</a> </li>
+               {% endfor %}
           </ol>
         </div>
       </div>
