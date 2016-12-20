@@ -1,3 +1,4 @@
 Django
 djangorestframework
 youtube-dl
+python-magic
