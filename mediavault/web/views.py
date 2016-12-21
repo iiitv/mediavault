@@ -264,7 +264,14 @@ def media_get(request, id):
     if not item.exists():
         remove_item_recursive(item)
         return HttpResponse('', status=404)
-    return redirect('/static-media{0}'.format(item.path))
+    f = open(item.path, 'rb')
+    response = HttpResponse(f)
+    response['Content-Description'] = 'attachment; filename=%s' % item.name
+    response['Content-Type'] = item.type.type
+    f = open(item.path, 'rb')
+    response['Content-Length'] = str(len(f.read()))
+    return response
+    # return redirect('/static-media{0}'.format(item.path))
 
 
 def explore_root(request):
