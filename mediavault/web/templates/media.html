@@ -1,105 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>MediaVault | {{ item.name }}</title>
-  	 <link rel="stylesheet" href="/static/css/home.css" type="text/css" media="all">
-  	 <style>
-  	 #container {
-    width: 1300px;
-   
-    margin: auto;
-	}
-	#first {
-	    width: 900px;
-	    float: left;
-	   
-	}
-	#second {
-	    width: 400px;
-	    float: left;
-	    
-	    
-	}
-	#clear {
-	    clear: both;
-	}
-  	 </style>
-</head>
-<body>
-<div class="header">
-    <center>
-	<img src="/static/images/logo1.png" style="display:inline-block;vertical-align: middle;">
-	<h1 style="display: inline-block; color:white;vertical-align: middle;">MediaVault - {{item.name}}</h1>
+{% extends "base.html" %}
+{% block main_body %}
+    <div class="container-fluid text-center">
+        {% if type == 'audio' %}
+            <audio controls src="/media-get/{{ item.id }}" preload="auto" id="media-player">
+                Not supported.
+            </audio>
+        {% elif type == 'video' %}
+            <video controls src="/media-get/{{ item.id }}" preload="auto" id="media-player">
+                Not supported.
+            </video>
+        {% elif type == 'image' %}
+            <img src="/media-get/{{ item.id }}"
+                 alt="Unable to display image. Please download.">
+        {% elif type == 'directory' %}
+            Item is a directory
+        {% else %}
+            Mime not recognized.
+        {% endif %}
+        {% if type != 'directory' %}
+            <div class="text-center" style="font-size: 20px;">
+                {% if number_of_ratings > 0 %}
+                    Rated
+                    <span class="label label-info">{{ average_rating }}</span>
+                    from {{ number_of_ratings }} rating
+                    {% if number_of_ratings > 1 %}s{% endif %}.
+                {% else %}
+                    <h2>No Rating data.</h2>
+                {% endif %}
+                Viewed {{ item.views }} times.
+            </div>
+            <button class="btn btn-success btn-lG"><a
+                    href="/media-get/{{ item.id }}"><i class="fa fa-download"
+                                                       aria-hidden="true"></i>
+                Download</a></button>
+        {% endif %}
 
-    </center>
- </div>
- <br/><br/>
-<div id="container">
-<div id="first">
-{% if type == 'audio' %}
-<audio controls src="/media-get/{{item.id}}" preload="auto">
-    Not supported.
-</audio>
-{% elif type == 'video' %}
-<video controls src="/media-get/{{item.id}}" preload="auto">
-    Not supported.
-</video>
-{% elif type == 'image' %}
-<img src="/media-get/{{item.id}}"
-     alt="Unable to display image. Please download.">
-{% elif type == 'directory' %}
-Item is a directory
-{% else %}
-Mime not recognized.
-{% endif %}
-{% if type != 'directory' %}
-<br/>
-<button><a href="/media-get/{{item.id}}" style="color:black;">Download</a></button>
-{% endif %}
-</div>
-<div  id="second">
-<h1 >Wanna Suggest Someone??</h1>
-<form method="post">
-    {% csrf_token %}
-    <div style="margin-top:10px;">
-    <select name="id_suggest_user">
-        {% for user in users %}
-        <option value="{{user.id}}">{{user.username}}</option>
-        {% endfor %}
-    </select>
     </div>
-	<input type="submit" name="suggest" value="Suggest">
-</form>
-{% if number_of_ratings > 0 %}
-{{ average_rating }}/10.0 from {{ number_of_ratings }} rating{% if number_of_ratings > 1 %}s{% endif %}
-{% else %}
-<h2>This media has not been rated yet.</h2>
-{% endif %}
+    <div class="container" style="margin-top: 50px">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <h4>Suggest to </h4>
+                <form method="post">
+                    {% csrf_token %}
+                    <div>
+                        <select name="id_suggest_user" class="form-control">
+                            {% for user_ in users %}
+                                <option value="{{ user_.id }}">{{ user_.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <input type="submit" name="suggest" value="Send Suggestion"
+                           class="btn btn-success">
+                </form>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <form method="post">
+                    <h4>Rate this file</h4>
+                    {% csrf_token %}
+                    <select name="rating" class="form-control">
+                        <option value="10">10</option>
+                        <option value="9">9</option>
+                        <option value="8">8</option>
+                        <option value="7">7</option>
+                        <option value="6">6</option>
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="3">3</option>
+                        <option value="2">2</option>
+                        <option value="1">1</option>
+                        <option value="0">0</option>
+                    </select>
+                    <input type="submit" name="rate" value="Submit Rating"
+                           class="btn btn-success">
+                </form>
 
-Number of views - {{ item.views }}
-
-<form method="post">
-    <h2>Rate this media...</h2>
-    {% csrf_token %}
-    <select name="rating">
-        <option value="10">10</option>
-        <option value="9">9</option>
-        <option value="8">8</option>
-        <option value="7">7</option>
-        <option value="6">6</option>
-        <option value="5">5</option>
-        <option value="4">4</option>
-        <option value="3">3</option>
-        <option value="2">2</option>
-        <option value="1">1</option>
-        <option value="0">0</option>
-    </select>
-    <input type="submit" name="rate" value="Submit Rating">
-</form>
-</div>
-<div id="clear"></div>
-</div>
-
-</body>
-</html>
+            </div>
+        </div>
+    </div>
+{% endblock %}

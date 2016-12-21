@@ -1,55 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>MediaVault | Shared Items</title>
-    <link rel="stylesheet" href="/static/css/home.css" type="text/css" media="all">
-    <link rel="stylesheet" href="/static/css/home.css" type="text/css" media="all">
+{% extends "base.html" %}
+{% block main_body %}
+    <div class="text-center">
+        {% for message in messages %}
+            <div>
+                    <span class="label label-info">
+                        {{ message }}
+                    </span>
+            </div>
+        {% endfor %}
+        {% for message in errors %}
+            <div>
+                    <span class="label label-info">
+                        {{ message }}
+                    </span>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="container">
+    <form target="" method="post" class="text-center">
+        {% csrf_token %}
+        <input type="text" name="location" placeholder="Path to Add"
+               required="required" class="form-control">
+        <label class="pull-left">Accessible to</label>
+        <select name="permission" class="form-control">
+            <option value="all">Everyone</option>
+            <option value="admin">Admins Only</option>
+            <option value="self">Only You (Current User)</option>
+        </select><br/>
+        <input type="submit" name="add" class="btn btn-success">
+    </form>
+    <div style="margin-top: 60px;">
+        {% for item in items %}
+            {{ item.manage_html|safe }}
+        {% endfor %}
+    </div>
 
-
-</head>
-<body>
- <div class="header">
-
-    <center>
-	<img src="/static/images/logo1.png" style="display:inline-block;vertical-align: middle;">
-	<h1 style="display: inline-block; color:white;vertical-align: middle;">MediaVault - Shared-Items</h1>
-
-    </center>
-  </div>
-<center>
-<div style="color:white; margin-top:100px;">
-{% if number_of_messages > 0 %}
-    {% for message in messages %}
-        <p style="color:white; font-size:15px; margin-top: 5px; ">{{ message }}</p> <br/>
-    {% endfor %}
-{% endif %}
-{% if number_of_errors > 0 %}
-    {% for message in errors %}
-        <p style="color:white; font-size:15px; margin-top: 5px; ">{{ message }}</p> <br/>
-    {% endfor %}
-{% endif %}
-</div>
-</center>
-<center>
-<form target="" method="post">
-    {% csrf_token %}
-    <input type="text" name="location" placeholder="Location to Add" required="required">
-    <select name="permission">
-        <option value="all">Everyone</option>
-        <option value="admin">Admins Only</option>
-        <option value="self">Only You (Current User)</option>
-    </select><br/>
-    <input type="submit" name="add" style="margin-top:20px;">
-</form>
-</center>
-<div style="color:black; margin-top:10px;margin-left:400px;">
-
-	{% for item in items %}
-	<li style="font-size: 27px;margin-top:10px;"><a href="/shared-items/{{item.id}}" style="color:black;">{{ item.name }}</a></li>
-
-	{% endfor %}
-</div>
-
-</body>
-</html>
+    </div>
+{% endblock %}

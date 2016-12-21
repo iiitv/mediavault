@@ -134,6 +134,31 @@ class SharedItem(models.Model):
     def accessible(self, user):
         return ItemAccessibility.objects.get(user=user, item=self).accessible
 
+    def _html(self, destination):
+        html = '''<a href="{0}">
+            <div class="mv">
+                <span class="mv-type"><i class="fa fa-{1}" aria-hidden="true"></i></span>
+                <span class="mv-name">{2}</span>
+            </div>
+        </a>'''
+        link = '/{0}/{1}'.format(destination, self.id)
+        media_t = media_type(self.type.type)
+        if media_t == 'audio':
+            fa = 'music'
+        elif media_t == 'video':
+            fa = 'video-camera'
+        elif media_t == 'image':
+            fa = 'image'
+        else:
+            fa = 'folder'
+        return html.format(link, fa, self.name)
+
+    def html(self):
+        return self._html('media')
+
+    def manage_html(self):
+        return self._html('shared-items')
+
 
 class ItemAccessibility(models.Model):
     """

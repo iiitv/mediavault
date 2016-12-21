@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^online/(?P<id>.*)/?$', views.online_single, name='online_single'),
     url(r'^change-password/?', views.change_password, name='change_password'),
     url(r'^master/user/reset/?$', views.reset_password, name='reset-password'),
+    url(r'^test', view=views.test, name='test'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

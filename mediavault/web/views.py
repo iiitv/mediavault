@@ -31,11 +31,10 @@ def home(request):
         request,
         'home.html',
         {
-            'is_admin': user.is_superuser,
-            # 'tree': item_tree,
             'suggestions': suggested_items,
             'latest': latest_items,
-            'current_user': user
+            'user': user,
+            'title': 'Home'
         }
     )
 
@@ -63,7 +62,8 @@ def login(request):
         request,
         'login.html',
         {
-            'error': error
+            'error': error,
+            'title': 'Log In'
         }
     )
 
@@ -108,7 +108,8 @@ def shared_items(request):
             'errors': errors,
             'messages': messages,
             'items': get_root_items(user),
-            'current_user': user
+            'user': user,
+            'title': 'Manage Shared Items | Root'
         }
     )
 
@@ -241,8 +242,8 @@ def media_page(request, id):
         item.save()
     return render(request, 'media.html',
                   {'type': media_type, 'item': item, 'users': allowed_users,
-                   'number_of_ratings': number_of_ratings,
-                   'average_rating': average_rating, 'current_user': user})
+                   'number_of_ratings': number_of_ratings, 'user': user,
+                   'average_rating': average_rating, 'title': item.name})
 
 
 def media_get(request, id):
@@ -275,8 +276,8 @@ def explore_root(request):
         return redirect('/login?err=No such user')
     user = user[0]
     items = get_root_items(user)
-    return render(request, 'explore.html', {'items': items,
-                                            'current_user': user})
+    return render(request, 'explore.html', {'items': items, 'user': user,
+                                            'title': 'Explore'})
 
 
 def explore(request, id):
@@ -301,7 +302,7 @@ def explore(request, id):
         return redirect('/media/{0}'.format(id))
     return render(request, 'explore.html',
                   {'items': item.children.all().order_by('name'),
-                   'current_user': user})
+                   'user': user, 'title': item.name})
 
 
 def master_user(request):
@@ -538,3 +539,7 @@ def online_single(request, id):
             'Request to download audio has been added and will be processed.')
     return render(request, 'online_single.html',
                   {'messages': messages, 'current_user': user})
+
+
+def test(request):
+    return render(request, 'base.html', {})

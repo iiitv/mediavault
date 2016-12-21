@@ -1,101 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>MediaVault | Home</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/static/css/materialize.css" type="text/css" media="all">
-    <link rel="stylesheet" href="/static/css/home.css" type="text/css" media="all">
-
-</head>
-<body>
-    <div class="header">
-    <center>
-	<h1 style="display: inline-block; color:white;vertical-align: middle;">MediaVault - Home</h1>
-        </center>
+{% extends "base.html" %}
+{% block main_body %}
+    <div class="container">
+    <h3>Recommended</h3>
+    {% for item in suggestions %}
+        {{ item.html|safe }}
+    {% endfor %}
+    <h3>Latest</h3>
+    {% for item in latest %}
+        {{ item.html|safe }}
+    {% endfor %}
     </div>
-
-
-
-    <ul id="dropdown1" class="dropdown-content">
-        <li><a href="/shared-items">Manage Files</a></li>
-        <li><a class="dropdown-button" href="/master/user" data-activates="dropdown4">Manage Users<i class="material-icons right"></i></a></li>
-
-             <ul id="dropdown4" class="dropdown-content">
-        <li><a href="//master/user/add">Add User</a></li>
-        <li><a href="/master/user/modify">Modify User</a></li>
-         <li><a href="/master/user/reset">Reset Password</a> </li>
-    </ul>
-    </ul>
-
-    <ul id="dropdown2" class="dropdown-content">
-        <li><a href="/change-password">Change Password</a></li>
-        <li><a href="/logout">Logout</a></li>
-    </ul>
-
-    <ul id="dropdown3" class="dropdown-content">
-        <li><a href="/online">Online Media</a></li>
-    </ul>
-
-
-    <nav>
-    <div class="nav-wrapper">
-      <a href="#!" class="brand-logo"><img src="/static/images/logo2.png" style="display:inline-block;vertical-align: middle;"></a>
-      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons reorder">Menu</i></a>
-
-           <ul class="side-nav" id="mobile-demo">
-        <li><a href="/">Home</a></li>
-        <li><a href="/explore">Explore</a></li>
-        <li><a href="/suggestions">Suggestions</a></li>
-        <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Master Access<i class="material-icons right"></i></a></li>
-        <li><a class="dropdown-button" href="#!" data-activates="dropdown2">Account<i class="material-icons right"></i></a></li>
-          <li><a class="dropdown-button" href="#!" data-activates="dropdown3">More<i class="material-icons right"></i></a></li>
-      </ul>
-
-      <ul class="right hide-on-med-and-down">
-       <li><a href="/#!">Home</a></li>
-        <li><a href="/explore">Explore</a></li>
-        <li><a href="/suggestions">Suggestions</a></li>
-        {% if current_user.is_superuser %}<li><a class="dropdown-button" href="#!" data-activates="dropdown1">Master Access<i class="material-icons right"></i></a></li>{% endif %}
-        <li><a class="dropdown-button" href="#!" data-activates="dropdown2">Account<i class="material-icons right"></i></a></li>
-          <li><a class="dropdown-button" href="#!" data-activates="dropdown3">More<i class="material-icons right"></i></a></li>
-      </ul>
-
-    </div>
-  </nav>
-
-<div class="row">
-      <div class="col s12 m6 l4 offset-l2">
-        <div class="card-panel teal" id="card1">
-            <h2>Recommended Media</h2>
-          <ol class="list">
-              {% for i in suggestions %}
-                <li><a href="/explore/{{ i.id }}">{{ i.name }}</a> </li>
-              {% endfor %}
-          </ol>
-        </div>
-      </div>
-     <div class="col s12 m6 l4">
-        <div class="card-panel teal" id="card2">
-            <h2>Recently Added Items</h2>
-           <ol class="list">
-               {% for i in latest %}
-               <li><a href="/explore/{{ i.id }}">{{ i.name }}</a> </li>
-               {% endfor %}
-          </ol>
-        </div>
-      </div>
-</div>
-
-    <center>
-        <span class="media_button">
-            <a href="/explore"><input type="submit"  name="media" value="Browse Media" ></a>
-        </span>
-    </center>
-
-<script src="/static/js/jquery-2.1.4.js"></script>
-<script src="/static/js/materialize.js"></script>
-<script src="/static/js/script.js"></script>
-
-</body>
-</html>
+{% endblock %}
