@@ -473,8 +473,8 @@ def change_password(request):
             errors.append('Please provide old password')
     return render(request, 'change-password.html',
                   {'errors': errors, 'messages': messages,
-                   'number_of_errors': len(errors),
-                   'number_of_messages': len(messages), 'current_user': user})
+                   'number_of_errors': len(errors), 'title': 'Change Password',
+                   'number_of_messages': len(messages), 'user': user})
 
 
 def reset_password(request):
