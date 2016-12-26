@@ -1,40 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>MediaVault | {{current_user.username}} | Suggestions</title>
-    <link rel="stylesheet" href="/static/css/home.css" type="text/css" media="all">
-</head>
-<body>
-    <div class="header">
-    <center>
-	    <img src="/static/images/logo1.png" style="display:inline-block;vertical-align: middle;">
-	    <h1 style="display: inline-block; color:white;vertical-align: middle;">MediaVault - Suggestions</h1>
-
-    </center>
-    </div>
-
-    <center>
-    <table border="1" class="table_layout">
-        <thead>
+{% extends "base.html" %}
+{% block main_body %}
+    <div class="container">
+        <table class="table table-responsive">
+            <thead>
             <tr>
                 <td>Suggested Media</td>
                 <td>Suggested By</td>
                 <td>Suggestion Time</td>
             </tr>
-        </thead>
-    <tbody>
-    {% for i in suggestions %}
-    <tr>
-        <td><a href="/media/{{i.item.id}}" style="text-decoration: none">{{i.item.name}}</a></td>
-        <td>{{i.from_user.username}}</td>
-        <td>{{i.time}}</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
-</center>
-
-
-</body>
-</html>
+            </thead>
+            <tbody>
+            {% for i in suggestions %}
+                <tr>
+                    <td>{{ i.item.html|safe }}</td>
+                    <td>{{ i.from_user.username }}</td>
+                    <td>{{ i.time }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
