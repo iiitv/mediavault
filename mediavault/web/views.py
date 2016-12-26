@@ -168,7 +168,8 @@ def single_shared_item(request, id):
         'allowed_users': allowed_users,
         'other_users': other_users,
         'item': item,
-        'children': children
+        'children': children,
+        'title': 'Manage Shared Items | {0}'.format(item.name)
     })
 
 
