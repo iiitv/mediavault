@@ -139,6 +139,7 @@ class SharedItem(models.Model):
             <div class="mv">
                 <span class="mv-type"><i class="fa fa-{1}" aria-hidden="true"></i></span>
                 <span class="mv-name">{2}</span>
+                <span class="pull-right">{3} <i class="fa fa-eye aria-hidden="true"></i></span>
             </div>
         </a>'''
         link = '/{0}/{1}'.format(destination, self.id)
@@ -151,7 +152,7 @@ class SharedItem(models.Model):
             fa = 'image'
         else:
             fa = 'folder'
-        return html.format(link, fa, self.name)
+        return html.format(link, fa, self.name, self.views)
 
     def html(self):
         return self._html('media')

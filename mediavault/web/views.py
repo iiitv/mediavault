@@ -182,7 +182,8 @@ def media_page(request, id):
     user = user[0]
     item = SharedItem.objects.filter(id=id)
     if len(item) == 0:
-        return render(request, 'notfound.html', {'error': 'No such item found'})
+        return render(request, 'notfound.html', {
+            'error': 'No such item found'})
     else:
         item = item[0]
         if not item.accessible(user):
@@ -271,7 +272,6 @@ def media_get(request, id):
     f = open(item.path, 'rb')
     response['Content-Length'] = str(len(f.read()))
     return response
-    # return redirect('/static-media{0}'.format(item.path))
 
 
 def explore_root(request):
