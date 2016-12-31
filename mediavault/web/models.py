@@ -98,6 +98,7 @@ class SharedItem(models.Model):
     audio_bit_rate = models.PositiveIntegerField(null=True, blank=True)
     children = models.ManyToManyField('SharedItem', blank=True)
     views = models.PositiveIntegerField(null=False, blank=False, default=0)
+    is_root = models.BooleanField(default=False)
     seen_by = models.ManyToManyField(User, blank=True)
 
     def dictify(self):
@@ -224,11 +225,7 @@ def get_children(parent, user):
 
 
 def get_root_items(user):
-    all_children = set()
-    all_items = SharedItem.objects.all()
-    for item in all_items:
-        all_children = all_children.union(set(item.children.all()))
-    return filter_items(set(all_items).difference(all_children), user)
+    return SharedItem.objects.filter(is_root=True)
 
 
 def filter_items(items, user):
@@ -311,6 +308,8 @@ def add_item(location, user, permission, parent, directory=False):
         type = type[0]
     new_item = SharedItem(name=name, type=type,
                           path=location)  # TODO : Get more details
+    if parent is None:
+        new_item.is_root = True
     new_item.save()
     if parent:
         parent.children.add(new_item)
