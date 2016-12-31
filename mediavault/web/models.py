@@ -11,6 +11,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.db.transaction import atomic
 from django.dispatch import receiver
+from django.utils import timezone
 
 from . import identifier, is_media, media_type
 
@@ -100,6 +101,7 @@ class SharedItem(models.Model):
     views = models.PositiveIntegerField(null=False, blank=False, default=0)
     is_root = models.BooleanField(default=False)
     seen_by = models.ManyToManyField(User, blank=True)
+    time_added = models.DateTimeField(default=timezone.now)
 
     def dictify(self):
         _dict = {
@@ -412,6 +414,7 @@ def get_suggested_items(user):
 
 def get_latest_items(user, count=10):
     items = [instance.item for instance in
-             ItemAccessibility.objects.filter(user=user, accessible=True) if
-             instance.item.type.type != 'Directory']
-    return items[:count]
+             ItemAccessibility.objects.filter(
+                 ~models.Q(item__type__type='Directory'), user=user,
+                 accessible=True).order_by('-item__time_added')[:count]]
+    return items
